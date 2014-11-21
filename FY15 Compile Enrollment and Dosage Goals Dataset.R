@@ -8,7 +8,7 @@
 
 # SPECIFY PARAMETERS.
 # Date of previous files/run.
-oldDate <- "2014-11-04"
+oldDate <- "2014-11-05"
 # Location of current source data.
 sourceFiles <- "Z:/Cross Instrument/FY15/Source Data"
 # Location of archived data files (OLD FILES).
