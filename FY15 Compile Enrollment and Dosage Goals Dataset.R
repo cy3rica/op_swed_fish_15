@@ -8,7 +8,7 @@
 
 # SPECIFY PARAMETERS.
 # Date of previous files/run.
-oldDate <- "2014-11-05"
+oldDate <- "2014-11-21"
 # Location of current source data.
 sourceFiles <- "Z:/Cross Instrument/FY15/Source Data"
 # Location of archived data files (OLD FILES).
@@ -27,7 +27,6 @@ fileNames <- c("Atlantic_FY15 Site Goals_Approved_Org Source of Record",
               "NorthEast_FY15 Site Goals_Approved_Org Source of Record",
               "SOUTH_FY15 Site Goals_Approved_Org Source of Record",
               "West_FY15 Site Goals_Approved_Org Source of Record",
-              "Network Summary_FY15 Goals_Org Source of Record",
               "Check Data Headers",
               "FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets",
               "FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets")
@@ -41,8 +40,8 @@ Atlantic <- list(c("Philadelphia", 2, 7, 24), c("Orlando", 4, 7, 13),
 Midwest <- list(c("Chicago", 2, 7, 27), c("Cleveland", 4, 7, 12),
                 c("Columbus", 6, 7, 10), c("Detroit", 8, 7, 17),
                 c("Milwaukee", 10, 7, 15))
-Northeast <- list(c("Boston", 2, 7, 27), c("New Hampshire", 4, 7, 12),
-                  c("Rhode Island", 6, 7, 11), c("New York", 8, 7, 30))
+Northeast <- list(c("Boston", 2, 7, 27), c("New Hampshire", 5, 7, 12),
+                  c("Rhode Island", 7, 7, 11), c("New York", 9, 7, 30))
 South <- list(c("Baton Rouge", 2, 6, 11), c("Columbia", 4, 6, 8),
               c("Little Rock", 6, 6, 11), c("New Orleans", 8, 6, 10),
               c("San Antonio", 10, 6, 14), c("Tulsa", 12, 6, 11))
@@ -53,7 +52,7 @@ Regions <- list(Atlantic, Midwest, Northeast, South, West)
 
 # Move old goals files to archive folder.
 for (i in 1:length(fileNames)) {
-    if (i <= 6) {
+    if (i <= 5) {
         file.rename(from = paste(sourceFiles, "/", fileNames[i], " ", oldDate, ".xlsx", sep = ""),
                     to = paste(oldDataLocation, "/", fileNames[i], " ", oldDate, ".xlsx", sep = ""))
     } else {
@@ -63,7 +62,7 @@ for (i in 1:length(fileNames)) {
 }
 
 # Append current date to current goals files.
-for (i in 1:(length(Regions) + 1)) {
+for (i in 1:length(Regions)) {
     file.rename(from = paste(sourceFiles, "/", fileNames[i], ".xlsx", sep = ""),
                 to = paste(sourceFiles, "/", fileNames[i], " ",
                            as.character(Sys.Date()), ".xlsx", sep = ""))

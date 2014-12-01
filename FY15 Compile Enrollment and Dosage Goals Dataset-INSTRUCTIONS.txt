@@ -4,23 +4,22 @@ Purpose: FY15 enrollment and dosage goals currently sit in spreadsheets, one MS 
 
 1.) Download/copy most up-to-date goals from cyconnect, and save in folder specified below.
     CYCONNECT: https://cyconnect.cityyear.org/funcserv/RSO/Goal%20Management/Forms/AllItems.aspx?RootFolder=%2Ffuncserv%2FRSO%2FGoal%20Management%2FFY15&FolderCTID=0x012000DF5F215501704D44873A6A146F90AC8700AE00225C9FA67C4D8645F91A31955A72&View=%7B937BCFDF%2DD11E%2D452D%2D84E6%2DFDD1EBCACF1E%7D&InitialTabId=Ribbon%2ERead&VisibilityContext=WSSTabPersistence
-    FOLDER: Z:\Cross Instrument\FY15\Source Data
-    LIST OF FILES (6):
+    FOLDER: \\hqsfs.cityyear.org\eval_analysis\Cross Instrument\FY15\Source Data
+    LIST OF FILES (5):
     Atlantic_FY15 Site Goals_Approved_Org Source of Record.xlsx
     MidWest_FY15 Site Goals_Approved_Org Source of Record.xlsx
     NorthEast_FY15 Site Goals_Approved_Org Source of Record.xlsx
     SOUTH_FY15 Site Goals_Approved_Org Source of Record.xlsx
     West_FY15 Site Goals_Approved_Org Source of Record.xlsx
-    Network Summary_FY15 Goals_Org Source of Record.xlsx
 
 2.) For each regional file, convert all formulas to values.
 	Select all tabs, ctrl+a twice, ctrl+c, then paste special for values.
 
 3.) Pull up R script "FY15 Compile Enrollment and Dosage Goals Dataset.R" from this location:
-    Z:\github_syntax_files\FY15
+    \\hqsfs.cityyear.org\eval_analysis\github_syntax_files\FY15
 
 4.) In the script, update line 11 to reflect the last date goals were compiled (FORMAT: YYYY-MM-DD, e.g. 2015-01-31).
-	See Z:\Cross Instrument\FY15\Source Data\Check Data Headers YYYY-MM-DD.csv for latest copy.
+	See \\hqsfs.cityyear.org\eval_analysis\Cross Instrument\FY15\Source Data\Check Data Headers YYYY-MM-DD.csv for latest copy.
 
 5.) Run the entire script file.
     This script should result in three new files:

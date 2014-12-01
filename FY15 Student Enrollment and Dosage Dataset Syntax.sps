@@ -590,6 +590,94 @@ VALUE LABELS LITMetOCTDose 0 "Did not meet OCTOBER literacy dosage goal"
    1 "Met OCTOBER literacy dosage goal".
 VALUE LABELS MTHMetOCTDose 0 "Did not meet OCTOBER math dosage goal"
    1 "Met OCTOBER math dosage goal".
+*****     RSO - November Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= NOV.ELA.DosageGoal.Minutes)) LITMetNOVDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < NOV.ELA.DosageGoal.Minutes)) LITMetNOVDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= NOV.MTH.DosageGoal.Minutes)) MTHMetNOVDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < NOV.MTH.DosageGoal.Minutes)) MTHMetNOVDose = 0.
+VARIABLE LABELS LITMetNOVDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy NOVEMBER Dosage Benchmark (with overlap)"
+   MTHMetNOVDose "DOSAGE ACTUAL\nNumber of Students Meeting Math NOVEMBER Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetNOVDose 0 "Did not meet NOVEMBER literacy dosage goal"
+   1 "Met NOVEMBER literacy dosage goal".
+VALUE LABELS MTHMetNOVDose 0 "Did not meet NOVEMBER math dosage goal"
+   1 "Met NOVEMBER math dosage goal".
+*****     RSO - December Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= DEC.ELA.DosageGoal.Minutes)) LITMetDECDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < DEC.ELA.DosageGoal.Minutes)) LITMetDECDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= DEC.MTH.DosageGoal.Minutes)) MTHMetDECDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < DEC.MTH.DosageGoal.Minutes)) MTHMetDECDose = 0.
+VARIABLE LABELS LITMetDECDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy DECEMBER Dosage Benchmark (with overlap)"
+   MTHMetDECDose "DOSAGE ACTUAL\nNumber of Students Meeting Math DECEMBER Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetDECDose 0 "Did not meet DECEMBER literacy dosage goal"
+   1 "Met DECEMBER literacy dosage goal".
+VALUE LABELS MTHMetDECDose 0 "Did not meet DECEMBER math dosage goal"
+   1 "Met DECEMBER math dosage goal".
+*****     RSO - January Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= JAN.ELA.DosageGoal.Minutes)) LITMetJANDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < JAN.ELA.DosageGoal.Minutes)) LITMetJANDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= JAN.MTH.DosageGoal.Minutes)) MTHMetJANDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < JAN.MTH.DosageGoal.Minutes)) MTHMetJANDose = 0.
+VARIABLE LABELS LITMetJANDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy JANUARY Dosage Benchmark (with overlap)"
+   MTHMetJANDose "DOSAGE ACTUAL\nNumber of Students Meeting Math JANUARY Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetJANDose 0 "Did not meet JANUARY literacy dosage goal"
+   1 "Met JANUARY literacy dosage goal".
+VALUE LABELS MTHMetJANDose 0 "Did not meet JANUARY math dosage goal"
+   1 "Met JANUARY math dosage goal".
+*****     RSO - February Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= FEB.ELA.DosageGoal.Minutes)) LITMetFEBDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < FEB.ELA.DosageGoal.Minutes)) LITMetFEBDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= FEB.MTH.DosageGoal.Minutes)) MTHMetFEBDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < FEB.MTH.DosageGoal.Minutes)) MTHMetFEBDose = 0.
+VARIABLE LABELS LITMetFEBDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy FEBRUARY Dosage Benchmark (with overlap)"
+   MTHMetFEBDose "DOSAGE ACTUAL\nNumber of Students Meeting Math FEBRUARY Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetFEBDose 0 "Did not meet FEBRUARY literacy dosage goal"
+   1 "Met FEBRUARY literacy dosage goal".
+VALUE LABELS MTHMetFEBDose 0 "Did not meet FEBRUARY math dosage goal"
+   1 "Met FEBRUARY math dosage goal".
+*****     RSO - March Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= MAR.ELA.DosageGoal.Minutes)) LITMetMARDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < MAR.ELA.DosageGoal.Minutes)) LITMetMARDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= MAR.MTH.DosageGoal.Minutes)) MTHMetMARDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < MAR.MTH.DosageGoal.Minutes)) MTHMetMARDose = 0.
+VARIABLE LABELS LITMetMARDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy MARCH Dosage Benchmark (with overlap)"
+   MTHMetMARDose "DOSAGE ACTUAL\nNumber of Students Meeting Math MARCH Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetMARDose 0 "Did not meet MARCH literacy dosage goal"
+   1 "Met MARCH literacy dosage goal".
+VALUE LABELS MTHMetMARDose 0 "Did not meet MARCH math dosage goal"
+   1 "Met MARCH math dosage goal".
+*****     RSO - April Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= APR.ELA.DosageGoal.Minutes)) LITMetAPRDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < APR.ELA.DosageGoal.Minutes)) LITMetAPRDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= APR.MTH.DosageGoal.Minutes)) MTHMetAPRDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < APR.MTH.DosageGoal.Minutes)) MTHMetAPRDose = 0.
+VARIABLE LABELS LITMetAPRDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy APRIL Dosage Benchmark (with overlap)"
+   MTHMetAPRDose "DOSAGE ACTUAL\nNumber of Students Meeting Math APRIL Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetAPRDose 0 "Did not meet APRIL literacy dosage goal"
+   1 "Met APRIL literacy dosage goal".
+VALUE LABELS MTHMetAPRDose 0 "Did not meet APRIL math dosage goal"
+   1 "Met APRIL math dosage goal".
+*****     RSO - May Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= MAY.ELA.DosageGoal.Minutes)) LITMetMAYDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < MAY.ELA.DosageGoal.Minutes)) LITMetMAYDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= MAY.MTH.DosageGoal.Minutes)) MTHMetMAYDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < MAY.MTH.DosageGoal.Minutes)) MTHMetMAYDose = 0.
+VARIABLE LABELS LITMetMAYDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy MAY Dosage Benchmark (with overlap)"
+   MTHMetMAYDose "DOSAGE ACTUAL\nNumber of Students Meeting Math MAY Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetMAYDose 0 "Did not meet MAY literacy dosage goal"
+   1 "Met MAY literacy dosage goal".
+VALUE LABELS MTHMetMAYDose 0 "Did not meet MAY math dosage goal"
+   1 "Met MAY math dosage goal".
+*****     RSO - June Dosage Goals.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= JUN.ELA.DosageGoal.Minutes)) LITMetJUNDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < JUN.ELA.DosageGoal.Minutes)) LITMetJUNDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= JUN.MTH.DosageGoal.Minutes)) MTHMetJUNDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < JUN.MTH.DosageGoal.Minutes)) MTHMetJUNDose = 0.
+VARIABLE LABELS LITMetJUNDose "DOSAGE ACTUAL\nNumber of Students Meeting ELA/Literacy JUNE Dosage Benchmark (with overlap)"
+   MTHMetJUNDose "DOSAGE ACTUAL\nNumber of Students Meeting Math JUNE Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetJUNDose 0 "Did not meet JUNE literacy dosage goal"
+   1 "Met JUNE literacy dosage goal".
+VALUE LABELS MTHMetJUNDose 0 "Did not meet JUNE math dosage goal"
+   1 "Met JUNE math dosage goal".
 
 ******************************************************************************************************************************************************
 ***** Create additional variables.
@@ -597,9 +685,9 @@ VALUE LABELS MTHMetOCTDose 0 "Did not meet OCTOBER math dosage goal"
 
 ***** Create regional variable.
 RECODE Location ("Baton Rouge" = 4) ("Boston" = 3) ("Chicago" = 2) ("Cleveland" = 2) ("Columbia" = 4) ("Columbus" = 2) ("Denver" = 5) ("Detroit" = 2) ("Jacksonville" = 1)
-("Little Rock" = 4) ("Los Angeles" = 5) ("Miami" = 1) ("Milwaukee" = 2) ("New Hampshire" = 3) ("New Orleans" = 4) ("New York" = 3) ("Orlando" = 1) ("Philadelphia" = 1)
-("Rhode Island" = 3) ("Sacramento" = 5) ("San Antonio" = 4) ("San Jose" = 5) ("Seattle" = 5) ("Tulsa" = 4) ("Washington, DC" = 1) (ELSE = SYSMIS) INTO RegionID.
-VALUE LABELS RegionID 1 "Atlantic"
+("Little Rock" = 4) ("Los Angeles" = 5) ("Miami" = 1) ("Milwaukee" = 2) ("New Hampshire" = 3) ("New Orleans" = 4) ("New York" = 3) ("Orlando" = 1) ("Philadelphia" = 3)
+("Rhode Island" = 3) ("Sacramento" = 5) ("San Antonio" = 4) ("San Jose" = 5) ("Seattle" = 5) ("Tulsa" = 4) ("Washington, DC" = 3) (ELSE = SYSMIS) INTO RegionID.
+VALUE LABELS RegionID 1 "Florida"
 2 "Midwest"
 3 "Northeast"
 4 "South"
@@ -729,6 +817,22 @@ AGGREGATE /OUTFILE = FINALTEAMDATASET39ONLY
    /BEHOfficialFL = SUM(BEHOfficialFL)
    /LITMetOCTDose = SUM(LITMetOCTDose)
    /MTHMetOCTDose = SUM(MTHMetOCTDose)
+   /LITMetNOVDose = SUM(LITMetNOVDose)
+   /MTHMetNOVDose = SUM(MTHMetNOVDose)
+   /LITMetDECDose = SUM(LITMetDECDose)
+   /MTHMetDECDose = SUM(MTHMetDECDose)
+   /LITMetJANDose = SUM(LITMetJANDose)
+   /MTHMetJANDose = SUM(MTHMetJANDose)
+   /LITMetFEBDose = SUM(LITMetFEBDose)
+   /MTHMetFEBDose = SUM(MTHMetFEBDose)
+   /LITMetMARDose = SUM(LITMetMARDose)
+   /MTHMetMARDose = SUM(MTHMetMARDose)
+   /LITMetAPRDose = SUM(LITMetAPRDose)
+   /MTHMetAPRDose = SUM(MTHMetAPRDose)
+   /LITMetMAYDose = SUM(LITMetMAYDose)
+   /MTHMetMAYDose = SUM(MTHMetMAYDose)
+   /LITMetJUNDose = SUM(LITMetJUNDose)
+   /MTHMetJUNDose = SUM(MTHMetJUNDose)
    /ATTMet56Dose = SUM(ATTMet56Dose)
    /BEHMet56Dose = SUM(BEHMet56Dose).
 
@@ -737,15 +841,48 @@ DATASET ACTIVATE FINALTEAMDATASET39ONLY.
 ***** Calculate % met dosage variables and % met IOG.
 COMPUTE LITMetOCTDosePerc = LITMetOCTDose / LITOfficialFL.
 COMPUTE MTHMetOCTDosePerc = MTHMetOCTDose / MTHOfficialFL.
+COMPUTE LITMetNOVDosePerc = LITMetNOVDose / LITOfficialFL.
+COMPUTE MTHMetNOVDosePerc = MTHMetNOVDose / MTHOfficialFL.
+COMPUTE LITMetDECDosePerc = LITMetDECDose / LITOfficialFL.
+COMPUTE MTHMetDECDosePerc = MTHMetDECDose / MTHOfficialFL.
+COMPUTE LITMetJANDosePerc = LITMetJANDose / LITOfficialFL.
+COMPUTE MTHMetJANDosePerc = MTHMetJANDose / MTHOfficialFL.
+COMPUTE LITMetFEBDosePerc = LITMetFEBDose / LITOfficialFL.
+COMPUTE MTHMetFEBDosePerc = MTHMetFEBDose / MTHOfficialFL.
+COMPUTE LITMetMARDosePerc = LITMetMARDose / LITOfficialFL.
+COMPUTE MTHMetMARDosePerc = MTHMetMARDose / MTHOfficialFL.
+COMPUTE LITMetAPRDosePerc = LITMetAPRDose / LITOfficialFL.
+COMPUTE MTHMetAPRDosePerc = MTHMetAPRDose / MTHOfficialFL.
+COMPUTE LITMetMAYDosePerc = LITMetMAYDose / LITOfficialFL.
+COMPUTE MTHMetMAYDosePerc = MTHMetMAYDose / MTHOfficialFL.
+COMPUTE LITMetJUNDosePerc = LITMetJUNDose / LITOfficialFL.
+COMPUTE MTHMetJUNDosePerc = MTHMetJUNDose / MTHOfficialFL.
 COMPUTE ATTMet56DosePerc = ATTMet56Dose / ATTOfficialFL.
 COMPUTE BEHMet56DosePerc = BEHMet56Dose / BEHOfficialFL.
 EXECUTE.
 
-***** Add variable labels.
-
+***** Add variable and value labels.
+VARIABLE LABELS LITMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy OCTOBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math OCTOBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetNOVDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy NOVEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetNOVDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math NOVEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetDECDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy DECEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetDECDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math DECEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetJANDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy JANUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetJANDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math JANUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetFEBDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy FEBRUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetFEBDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math FEBRUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetMARDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy MARCH Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetMARDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math MARCH Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetAPRDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy APRIL Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetAPRDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math APRIL Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetMAYDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy MAY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetMAYDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math MAY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetJUNDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy JUNE Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetJUNDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math JUNE Dosage Benchmark (out of ACTUAL FL Enrollment)".
 VALUE LABELS DNSchool 0 "Not a Diplomas Now School"
    1 "Diplomas Now School".
-VALUE LABELS RegionID 1 "Atlantic"
+VALUE LABELS RegionID 1 "Florida"
 2 "Midwest"
 3 "Northeast"
 4 "South"
@@ -886,6 +1023,22 @@ AGGREGATE /OUTFILE = FINALSITEDATASET39ONLY
    /BEHOfficialFL = SUM(BEHOfficialFL)
    /LITMetOCTDose = SUM(LITMetOCTDose)
    /MTHMetOCTDose = SUM(MTHMetOCTDose)
+   /LITMetNOVDose = SUM(LITMetNOVDose)
+   /MTHMetNOVDose = SUM(MTHMetNOVDose)
+   /LITMetDECDose = SUM(LITMetDECDose)
+   /MTHMetDECDose = SUM(MTHMetDECDose)
+   /LITMetJANDose = SUM(LITMetJANDose)
+   /MTHMetJANDose = SUM(MTHMetJANDose)
+   /LITMetFEBDose = SUM(LITMetFEBDose)
+   /MTHMetFEBDose = SUM(MTHMetFEBDose)
+   /LITMetMARDose = SUM(LITMetMARDose)
+   /MTHMetMARDose = SUM(MTHMetMARDose)
+   /LITMetAPRDose = SUM(LITMetAPRDose)
+   /MTHMetAPRDose = SUM(MTHMetAPRDose)
+   /LITMetMAYDose = SUM(LITMetMAYDose)
+   /MTHMetMAYDose = SUM(MTHMetMAYDose)
+   /LITMetJUNDose = SUM(LITMetJUNDose)
+   /MTHMetJUNDose = SUM(MTHMetJUNDose)
    /ATTMet56Dose = SUM(ATTMet56Dose)
    /BEHMet56Dose = SUM(BEHMet56Dose).
 
@@ -894,13 +1047,46 @@ DATASET ACTIVATE FINALSITEDATASET39ONLY.
 ***** Calculate % met dosage variables and % met IOG.
 COMPUTE LITMetOCTDosePerc = LITMetOCTDose / LITOfficialFL.
 COMPUTE MTHMetOCTDosePerc = MTHMetOCTDose / MTHOfficialFL.
+COMPUTE LITMetNOVDosePerc = LITMetNOVDose / LITOfficialFL.
+COMPUTE MTHMetNOVDosePerc = MTHMetNOVDose / MTHOfficialFL.
+COMPUTE LITMetDECDosePerc = LITMetDECDose / LITOfficialFL.
+COMPUTE MTHMetDECDosePerc = MTHMetDECDose / MTHOfficialFL.
+COMPUTE LITMetJANDosePerc = LITMetJANDose / LITOfficialFL.
+COMPUTE MTHMetJANDosePerc = MTHMetJANDose / MTHOfficialFL.
+COMPUTE LITMetFEBDosePerc = LITMetFEBDose / LITOfficialFL.
+COMPUTE MTHMetFEBDosePerc = MTHMetFEBDose / MTHOfficialFL.
+COMPUTE LITMetMARDosePerc = LITMetMARDose / LITOfficialFL.
+COMPUTE MTHMetMARDosePerc = MTHMetMARDose / MTHOfficialFL.
+COMPUTE LITMetAPRDosePerc = LITMetAPRDose / LITOfficialFL.
+COMPUTE MTHMetAPRDosePerc = MTHMetAPRDose / MTHOfficialFL.
+COMPUTE LITMetMAYDosePerc = LITMetMAYDose / LITOfficialFL.
+COMPUTE MTHMetMAYDosePerc = MTHMetMAYDose / MTHOfficialFL.
+COMPUTE LITMetJUNDosePerc = LITMetJUNDose / LITOfficialFL.
+COMPUTE MTHMetJUNDosePerc = MTHMetJUNDose / MTHOfficialFL.
 COMPUTE ATTMet56DosePerc = ATTMet56Dose / ATTOfficialFL.
 COMPUTE BEHMet56DosePerc = BEHMet56Dose / BEHOfficialFL.
 EXECUTE.
 
-***** Add variable labels.
-
-VALUE LABELS RegionID 1 "Atlantic"
+***** Add variable and value labels.
+VARIABLE LABELS LITMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy OCTOBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math OCTOBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetNOVDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy NOVEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetNOVDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math NOVEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetDECDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy DECEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetDECDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math DECEMBER Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetJANDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy JANUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetJANDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math JANUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetFEBDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy FEBRUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetFEBDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math FEBRUARY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetMARDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy MARCH Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetMARDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math MARCH Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetAPRDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy APRIL Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetAPRDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math APRIL Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetMAYDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy MAY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetMAYDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math MAY Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   LITMetJUNDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Literacy JUNE Dosage Benchmark (out of ACTUAL FL Enrollment)"
+   MTHMetJUNDosePerc "DOSAGE ACTUAL\n% of Students Meeting Math JUNE Dosage Benchmark (out of ACTUAL FL Enrollment)".
+VALUE LABELS RegionID 1 "Florida"
 2 "Midwest"
 3 "Northeast"
 4 "South"
