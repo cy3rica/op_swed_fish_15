@@ -14,7 +14,7 @@
 
 ***** Pull up student/section enrollment data.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\Total Student Dosage per IA - Mod - 2014.11.21.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\Total Student Dosage per IA - Mod - 2014.12.02.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -24,7 +24,7 @@ DATASET NAME StudentEnrollDosage.
 
 ***** Pull up school name to ID translation file.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\cyschoolhouse FY15 Schools 2014.11.21.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\cyschoolhouse FY15 Schools 2014.12.02.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -44,7 +44,7 @@ DATASET NAME SchoolIDTranslation.
 
 ***** Pull up cychannel dataset for DN variable.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\cychannel FY15 List of Schools 2014.11.21.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\cychannel FY15 List of Schools 2014.12.02.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -54,7 +54,7 @@ DATASET NAME cychanSchoolInfo.
 
 ***** Pull up team-level enrollment and dosage goals.
 GET DATA  /TYPE=TXT
-  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets 2014-11-05.csv"
+  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets 2014-12-02.csv"
   /ENCODING='Locale'
   /DELCASE=LINE
   /DELIMITERS=","
@@ -91,7 +91,7 @@ DATASET NAME TeamEnrollDosage.
 
 ***** Pull up site-level enrollment and dosage goals.
 GET DATA  /TYPE=TXT
-  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets 2014-11-05.csv"
+  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets 2014-12-02.csv"
   /ENCODING='Locale'
   /DELCASE=LINE
   /DELIMITERS=","

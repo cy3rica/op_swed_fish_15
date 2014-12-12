@@ -8,7 +8,7 @@
 
 # SPECIFY PARAMETERS.
 # Date of previous files/run.
-oldDate <- "2014-11-21"
+oldDate <- "2014-12-01"
 # Location of current source data.
 sourceFiles <- "Z:/Cross Instrument/FY15/Source Data"
 # Location of archived data files (OLD FILES).
@@ -42,9 +42,9 @@ Midwest <- list(c("Chicago", 2, 7, 27), c("Cleveland", 4, 7, 12),
                 c("Milwaukee", 10, 7, 15))
 Northeast <- list(c("Boston", 2, 7, 27), c("New Hampshire", 5, 7, 12),
                   c("Rhode Island", 7, 7, 11), c("New York", 9, 7, 30))
-South <- list(c("Baton Rouge", 2, 6, 11), c("Columbia", 4, 6, 8),
-              c("Little Rock", 6, 6, 11), c("New Orleans", 8, 6, 10),
-              c("San Antonio", 10, 6, 14), c("Tulsa", 12, 6, 11))
+South <- list(c("Baton Rouge", 2, 5, 10), c("Columbia", 4, 5, 7),
+              c("Little Rock", 6, 5, 10), c("New Orleans", 8, 5, 9),
+              c("San Antonio", 10, 6, 14), c("Tulsa", 12, 5, 10))
 West <- list(c("Denver", 2, 7, 14), c("Los Angeles", 4, 7, 31),
              c("Sacramento", 6, 7, 12), c("San Jose", 8, 7, 15),
              c("Seattle", 10, 7, 14))
