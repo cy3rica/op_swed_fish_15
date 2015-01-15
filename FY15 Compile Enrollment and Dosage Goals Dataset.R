@@ -8,7 +8,7 @@
 
 # SPECIFY PARAMETERS.
 # Date of previous files/run.
-oldDate <- "2014-12-01"
+oldDate <- "2015-01-02"
 # Location of current source data.
 sourceFiles <- "Z:/Cross Instrument/FY15/Source Data"
 # Location of archived data files (OLD FILES).
@@ -22,33 +22,36 @@ library(xlsx)
 library(plyr)
 
 # List of file names.
-fileNames <- c("Atlantic_FY15 Site Goals_Approved_Org Source of Record",
-              "MidWest_FY15 Site Goals_Approved_Org Source of Record",
-              "NorthEast_FY15 Site Goals_Approved_Org Source of Record",
-              "SOUTH_FY15 Site Goals_Approved_Org Source of Record",
-              "West_FY15 Site Goals_Approved_Org Source of Record",
-              "Check Data Headers",
-              "FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets",
-              "FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets")
+fileNames <- c("Florida_FY15 Site Goals_Approved_Org Source of Record",
+               "MidWest_FY15 Site Goals_Approved_Org Source of Record",
+               "NorthEast_FY15 Site Goals_Approved_Org Source of Record",
+               "SOUTH_FY15 Site Goals_Approved_Org Source of Record",
+               "West_FY15 Site Goals_Approved_Org Source of Record",
+               "Check Data Headers",
+               "FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets",
+               "FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets")
 
-# Set up list of tabs: Atlantic, Midwest, Northeast, South, West.
+# Set up list of tabs: Florida, Midwest, Northeast, South, West.
 # Each tab has the following associated information, in the following format:
 # c("Site Name", Tab Number, Start Row, End Row)
-Atlantic <- list(c("Philadelphia", 2, 7, 24), c("Orlando", 4, 7, 13),
-                 c("Jacksonville", 6, 7, 14), c("Miami", 8, 7, 24),
-                 c("Washington, DC", 10, 7, 19))
+Florida <- list(c("Orlando", 2, 7, 13), c("Jacksonville", 4, 7, 14),
+                c("Miami", 6, 7, 24))
 Midwest <- list(c("Chicago", 2, 7, 27), c("Cleveland", 4, 7, 12),
                 c("Columbus", 6, 7, 10), c("Detroit", 8, 7, 17),
                 c("Milwaukee", 10, 7, 15))
 Northeast <- list(c("Boston", 2, 7, 27), c("New Hampshire", 5, 7, 12),
-                  c("Rhode Island", 7, 7, 11), c("New York", 9, 7, 30))
+                  c("Rhode Island", 7, 7, 11), c("New York", 9, 7, 30), 
+                  c("Philadelphia", 11, 7, 24), c("Washington, DC", 13, 7, 19))
 South <- list(c("Baton Rouge", 2, 5, 10), c("Columbia", 4, 5, 7),
               c("Little Rock", 6, 5, 10), c("New Orleans", 8, 5, 9),
               c("San Antonio", 10, 6, 14), c("Tulsa", 12, 5, 10))
 West <- list(c("Denver", 2, 7, 14), c("Los Angeles", 4, 7, 31),
              c("Sacramento", 6, 7, 12), c("San Jose", 8, 7, 15),
              c("Seattle", 10, 7, 14))
-Regions <- list(Atlantic, Midwest, Northeast, South, West)
+Regions <- list(Florida, Midwest, Northeast, South, West)
+
+
+
 
 # Move old goals files to archive folder.
 for (i in 1:length(fileNames)) {
