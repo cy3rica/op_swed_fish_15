@@ -1,0 +1,33 @@
+USE [ImpactAnalytics]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_Container]    Script Date: 1/28/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[sp_Container]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	exec [sp_FY15_SOY_ATT]
+	exec [sp_FY15_SOY_BEH_RUBRIC]
+	exec [sp_FY15_SOY_BEH_SCHOOL_BASED]
+	exec [sp_FY15_SOY_ELA_CG]
+	exec [sp_FY15_SOY_ELA_SB]
+	exec [sp_FY15_SOY_LIT_ASSESS]
+	exec [sp_FY15_SOY_MTH_ASSESS]
+	exec [sp_FY15_SOY_MTH_CG]
+	exec [sp_FY15_SOY_MTH_SB]
+	exec [sp_FY15_SOY_LIT_ASSESS_ELA_CG]
+	exec [sp_FY15_SOY_MTH_ASSESS_MTH_CG]
+
+END
