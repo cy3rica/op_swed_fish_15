@@ -15,7 +15,7 @@
 ******************************************************************************************************************************************************
 
 ******************************************************************************************************************************************************
-***** (From Report.
+***** (From ReportCYData.dbo.RPT_STUDENT_MAIN.
 ******************************************************************************************************************************************************
 
 GET DATA
@@ -38,7 +38,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT ATT.* FROM ImpactAnalytics.dbo.[FY15_SOY_ATT] AS ATT'
+  /SQL='SELECT ATT.* FROM ImpactAnalytics.dbo.[FY15_ATT] AS ATT'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -52,7 +52,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT BEHRUB.* FROM ImpactAnalytics.dbo.[FY15_SOY_BEH_RUBRIC] AS BEHRUB'
+  /SQL='SELECT BEHRUB.* FROM ImpactAnalytics.dbo.[FY15_BEH_RUBRIC] AS BEHRUB'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -66,7 +66,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT BEHSCH.* FROM ImpactAnalytics.dbo.[FY15_SOY_BEH_SCHOOL_BASED] AS BEHSCH'
+  /SQL='SELECT BEHSCH.* FROM ImpactAnalytics.dbo.[FY15_BEH_SCHOOL_BASED] AS BEHSCH'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -80,7 +80,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT LITASSESS.* FROM ImpactAnalytics.dbo.[FY15_SOY_LIT_ASSESS] AS LITASSESS'
+  /SQL='SELECT LITASSESS.* FROM ImpactAnalytics.dbo.[FY15_LIT_ASSESS] AS LITASSESS'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -94,7 +94,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT LITASSESSELACG.* FROM ImpactAnalytics.dbo.[FY15_SOY_LIT_ASSESS_ELA_CG] AS LITASSESSELACG'
+  /SQL='SELECT LITASSESSELACG.* FROM ImpactAnalytics.dbo.[FY15_LIT_ASSESS_ELA_CG] AS LITASSESSELACG'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -108,7 +108,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT ELACG.* FROM ImpactAnalytics.dbo.[FY15_SOY_ELA_CG] AS ELACG'
+  /SQL='SELECT ELACG.* FROM ImpactAnalytics.dbo.[FY15_ELA_CG] AS ELACG'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -122,7 +122,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT ELASB.* FROM ImpactAnalytics.dbo.[FY15_SOY_ELA_SB] AS ELASB'
+  /SQL='SELECT ELASB.* FROM ImpactAnalytics.dbo.[FY15_ELA_SB] AS ELASB'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -136,7 +136,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT MTHASSESS.* FROM ImpactAnalytics.dbo.[FY15_SOY_MTH_ASSESS] AS MTHASSESS'
+  /SQL='SELECT MTHASSESS.* FROM ImpactAnalytics.dbo.[FY15_MTH_ASSESS] AS MTHASSESS'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -150,7 +150,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT MTHASSESSMTHCG.* FROM ImpactAnalytics.dbo.[FY15_SOY_MTH_ASSESS_MTH_CG] AS MTHASSESSMTHCG'
+  /SQL='SELECT MTHASSESSMTHCG.* FROM ImpactAnalytics.dbo.[FY15_MTH_ASSESS_MTH_CG] AS MTHASSESSMTHCG'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -164,7 +164,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT MTHCG.* FROM ImpactAnalytics.dbo.[FY15_SOY_MTH_CG] AS MTHCG'
+  /SQL='SELECT MTHCG.* FROM ImpactAnalytics.dbo.[FY15_MTH_CG] AS MTHCG'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -178,7 +178,7 @@ GET DATA
   /TYPE=ODBC
   /CONNECT='DSN=ImpactAnalytics;UID=;Trusted_Connection=Yes;APP=IBM SPSS Products: Statistics '+
     'Common;WSID=HQSSPSS;DATABASE=ImpactAnalytics'
-  /SQL='SELECT MTHSB.* FROM ImpactAnalytics.dbo.[FY15_SOY_MTH_SB] AS MTHSB'
+  /SQL='SELECT MTHSB.* FROM ImpactAnalytics.dbo.[FY15_MTH_SB] AS MTHSB'
   /ASSUMEDSTRWIDTH=255.
 CACHE.
 EXECUTE.
@@ -189,29 +189,29 @@ DATASET NAME MTHSB.
 ******************************************************************************************************************************************************
 
 DATASET ACTIVATE STUDENTMAIN.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\dbo_RPT_STUDENT_MAIN 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\dbo_RPT_STUDENT_MAIN 2015.02.09.sav".
 DATASET ACTIVATE ATT.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY ATT 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 ATT 2015.02.09.sav".
 DATASET ACTIVATE BEHRUB.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY BEH RUBRIC 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 BEH RUBRIC 2015.02.09.sav".
 DATASET ACTIVATE BEHSCH.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY BEH SCHOOL BASED 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 BEH SCHOOL BASED 2015.02.09.sav".
 DATASET ACTIVATE LITASSESS.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY LIT ASSESS 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 LIT ASSESS 2015.02.09.sav".
 DATASET ACTIVATE LITASSESSELACG.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY LIT ASSESS ELA CG 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 LIT ASSESS ELA CG 2015.02.09.sav".
 DATASET ACTIVATE ELACG.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY ELA CG 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 ELA CG 2015.02.09.sav".
 DATASET ACTIVATE ELASB.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY ELA SB 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 ELA SB 2015.02.09.sav".
 DATASET ACTIVATE MTHASSESS.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY MTH ASSESS 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MTH ASSESS 2015.02.09.sav".
 DATASET ACTIVATE MTHASSESSMTHCG.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY MTH ASSESS MTH CG 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MTH ASSESS MTH CG 2015.02.09.sav".
 DATASET ACTIVATE MTHCG.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY MTH CG 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MTH CG 2015.02.09.sav".
 DATASET ACTIVATE MTHSB.
-SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 SOY MTH SB 2015.02.03.sav".
+SAVE OUTFILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MTH SB 2015.02.09.sav".
 
 ******************************************************************************************************************************************************
 ***** Close all datasets.

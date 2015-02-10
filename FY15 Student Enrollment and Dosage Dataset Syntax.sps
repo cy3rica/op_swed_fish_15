@@ -14,7 +14,7 @@
 
 ***** Pull up student/section enrollment data.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\Total Student Dosage per IA - Mod - 2015.01.05.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\Total Student Dosage per IA - Mod - 2015.02.02.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -24,7 +24,7 @@ DATASET NAME StudentEnrollDosage.
 
 ***** Pull up school name to ID translation file.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\cyschoolhouse FY15 Schools 2015.01.05.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\cyschoolhouse FY15 Schools 2015.02.02.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -44,7 +44,7 @@ DATASET NAME SchoolIDTranslation.
 
 ***** Pull up cychannel dataset for DN variable.
 GET DATA /TYPE=XLSX 
-  /FILE='Z:\Cross Instrument\FY15\Source Data\cychannel FY15 List of Schools 2015.01.05.xlsx' 
+  /FILE='Z:\Cross Instrument\FY15\Source Data\cychannel FY15 List of Schools 2015.01.30.xlsx' 
   /SHEET=index 1
   /CELLRANGE=full 
   /READNAMES=on 
@@ -54,7 +54,7 @@ DATASET NAME cychanSchoolInfo.
 
 ***** Pull up team-level enrollment and dosage goals.
 GET DATA  /TYPE=TXT
-  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets 2015-01-05.csv"
+  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 School-Level Quarterly Enrollment and Monthly Dosage Targets 2015-02-03.csv"
   /ENCODING='Locale'
   /DELCASE=LINE
   /DELIMITERS=","
@@ -91,7 +91,7 @@ DATASET NAME TeamEnrollDosage.
 
 ***** Pull up site-level enrollment and dosage goals.
 GET DATA  /TYPE=TXT
-  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets 2015-01-05.csv"
+  /FILE="Z:\Cross Instrument\FY15\Source Data\FY15 Site-Level Quarterly Enrollment and Monthly Dosage Targets 2015-02-03.csv"
   /ENCODING='Locale'
   /DELCASE=LINE
   /DELIMITERS=","
@@ -106,6 +106,38 @@ Q3.ELA.EnrollGoal F5.0 Q3.MTH.EnrollGoal F5.0 Q3.ATT.EnrollGoal F5.0 Q3.BEH.Enro
 CACHE.
 EXECUTE.
 DATASET NAME SiteEnrollDosage.
+
+***** Pull up AmeriCorps grant ID translation file.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 cyschoolhouse AmeriCorps Grant ID Translation 2015.01.15.sav".
+DATASET NAME ACGrantIDs.
+
+***** Pull up AmeriCorps grant requirements.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\1. FY15 ACPM Summary for Progress Monitoring 2015.02.03.sav".
+DATASET NAME ACGoals.
+
+***** Pull up Student ID translation file.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\dbo_RPT_STUDENT_MAIN 2015.02.08.sav".
+DATASET NAME StPerfIDs.
+
+***** Pull up literacy assessment performance data.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MY LIT ASSESS subtable 2015.02.08.sav".
+DATASET NAME LITAssessPerf.
+
+***** Pull up math assessment performance data.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MY MTH ASSESS subtable 2015.02.08.sav".
+DATASET NAME MTHAssessPerf.
+
+***** Pull up ELA course grade performance data.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MY ELA CG subtable 2015.02.08.sav".
+DATASET NAME ELACGPerf.
+
+***** Pull up math course grade performance data.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MY MTH CG subtable 2015.02.08.sav".
+DATASET NAME MTHCGPerf.
+
+***** Pull up attendance performance data.
+GET FILE = "Z:\Cross Instrument\FY15\Source Data\FY15 MY ATT subtable 2015.02.08.sav".
+DATASET NAME ATTPerf.
 
 ******************************************************************************************************************************************************
 ***** Activate and prep student enrollment dosage data for merge/aggregation.
@@ -193,10 +225,10 @@ EXECUTE.
 
 CASESTOVARS
  /ID=cyStudentID
-	/FIXED = Location School LocalStudentID StudentName StudentGrade IALIT IAMTH IAATT IABEH
+  /FIXED = Location School LocalStudentID StudentName StudentGrade IALIT IAMTH IAATT IABEH
  /AUTOFIX = NO
  /INDEX= IndicatorArea
-	/DROP = ExitDateLatest ExitMissing.
+  /DROP = ExitDateLatest ExitMissing.
 
 DATASET NAME FINALDATASET.
 
@@ -448,12 +480,12 @@ EXECUTE.
 COMPUTE grdtemp = 14.
 EXECUTE.
 LOOP id=1 TO 14. 
-XSAVE OUTFILE='TeamEnrollDosageByGrade'
+XSAVE OUTFILE='TeamEnrollDosageBygrade'
    /KEEP ALL
    /PERMISSIONS=WRITEABLE.
 END LOOP. 
 EXECUTE. 
-GET FILE 'TeamEnrollDosageByGrade'. 
+GET FILE 'TeamEnrollDosageBygrade'. 
 SELECT IF (id LE grdtemp). 
 EXECUTE.
 DATASET NAME TeamEnrollDosageByGrade.
@@ -540,6 +572,533 @@ EXECUTE.
 
 ***** No longer need site enrollment dosage goal dataset.
 DATASET CLOSE SiteEnrollDosage.
+
+******************************************************************************************************************************************************
+***** Merge in AC Grant IDs.
+******************************************************************************************************************************************************
+
+***** Prep grant IDs data file for merge.
+DATASET ACTIVATE ACGrantIDs.
+***** Delete unnecessary variables.
+DELETE VARIABLES Grant SchoolTeam SchoolName GrantSite Location School.
+***** Select only rows with cyschSchoolRefID (note 1/20: adding this line because Dallas does not yet have cyschSchoolRefIDs).
+SELECT IF (cyschSchoolRefID ~= "").
+EXECUTE.
+***** Add value labels for existing variables.
+VALUE LABELS GrantCategory 1 "National Direct"
+   2 "State Commission"
+   3 "School Turnaround AmeriCorps".
+VALUE LABELS GrantSiteNum 1 "Boston [ND]"
+2 "Columbus [ND]"
+3 "Denver [ND]"
+4 "Jacksonville [ND]"
+5 "Little Rock [ND]"
+6 "Los Angeles [ND]"
+7 "Miami [ND]"
+8 "Milwaukee [ND]"
+9 "Rhode Island [ND]"
+10 "Sacramento [ND]"
+11 "San Jose [ND]"
+12 "Seattle [ND]" /* 13 "Tulsa [ND]" - Tulsa not on ND for FY15
+14 "Washington, DC [ND]"
+15 "Boston [State]"
+16 "Chicago [State]"
+17 "Cleveland [State]"
+18 "Columbia [State]"
+19 "Columbus [State]"
+20 "Detroit [State]"
+21 "Los Angeles [State]"
+22 "Louisiana (Baton Rouge) [State]"
+23 "Louisiana (New Orleans) [State]"
+24 "Miami [State Competitive]"
+25 "Miami [State Formula]"
+26 "New Hampshire [State]"
+27 "New York (DN) [State]"
+28 "New York [State]"
+29 "Orlando [State GMI]"
+30 "Orlando [State]"
+31 "Philadelphia [State]"
+32 "San Antonio [State]"
+33 "Washington, DC [State]"
+34 "Chicago / Kelvyn Park High School [STA]"
+35 "Chicago / Tilden Career Community Academy High School [STA]"
+36 "Denver / North High School [STA]"
+37 "Denver / Trevista at Horace Mann [STA]"
+38 "Los Angeles / Clinton MS [STA]"
+39 "Washington, DC / DC Scholars Stanton Elementary School [STA]"
+40 "Dallas [ND]"
+41 "Orlando [ND]"
+42 "Tulsa [State]"
+43 "Little Rock / Cloverdale Middle School [STA]"
+44 "Washington, DC / Garfield Elementary School [STA]".
+EXECUTE.
+VARIABLE LABELS GrantCategory "Grant Category"
+   GrantSiteNum "Grant / Site".
+EXECUTE.
+SORT CASES BY cyschSchoolRefID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cyschSchoolRefID (A).
+EXECUTE.
+
+***** Merge AC grant IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE ACGrantIDs
+   /BY cyschSchoolRefID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+******************************************************************************************************************************************************
+***** Merge in AC Grant-Level Information.
+******************************************************************************************************************************************************
+
+***** Prep AC goals file for merge.
+DATASET ACTIVATE ACGoals.
+***** Delete unnecessary variables.
+DELETE VARIABLES DELETE1 DELETE2 DELETE3 DELETE4 DELETE5 DELETE6 DELETE7 DELETE8 DELETE9 DELETE10 DELETE11 DELETE12 DELETE13
+DELETE14 DELETE15 DELETE16 DELETE17 DELETE18 DELETE19 DELETE20 DELETE21 DELETE22 DELETE23 DELETE24 DELETE25 DELETE26 DELETE27
+DELETE28 DELETE29 DELETE30 DELETE31 DELETE32 DELETE33 DELETE34 DELETE35 DELETE36 DELETE37 DELETE38 DELETE39 DELETE40 DELETE41
+DELETE42 DELETE43 DELETE44 DELETE45 DELETE46 DELETE47 DELETE48 DELETE49 DELETE50 DELETE51 DELETE52 DELETE53 DELETE54 DELETE55
+DELETE56 DELETE57 DELETE58 DELETE59 DELETE60 DELETE61 DELETE62.
+***** Rename linking ID variable.
+RENAME VARIABLES (EVAL_ID = GrantSiteNum).
+***** Add value labels for existing variables.
+VALUE LABELS ACreportLIT 0 "Not reporting on literacy for AmeriCorps"
+   1 "Reporting on literacy for AmeriCorps".
+VALUE LABELS ACreportMTH 0 "Not reporting on math for AmeriCorps"
+   1 "Reporting on math for AmeriCorps".
+VALUE LABELS ACreportATT 0 "Not reporting on attendance for AmeriCorps"
+   1 "Reporting on attendance for AmeriCorps".
+VALUE LABELS ACreportBEH 0 "Not reporting on behavior for AmeriCorps"
+   1 "Reporting on behavior for AmeriCorps".
+EXECUTE.
+***** Add variable labels for existing variables.
+VARIABLE LABELS ACreportLIT "Reporting on literacy for AmeriCorps? [0=No; 1=Yes]"
+   ACreportMTH "Reporting on math for AmeriCorps? [0=No; 1=Yes]"
+   ACreportATT "Reporting on attendance for AmeriCorps? [0=No; 1=Yes]"
+   ACreportBEH "Reporting on behavior for AmeriCorps? [0=No; 1=Yes]"
+   ACED1AcadGoal "GOAL ED1 Academic:\nUnique Number of Students Enrolled in Literacy or Math"
+   ACED2AcadGoal "GOAL ED2 Academic:\nUnique Number of Students Who Met Dosage in Literacy or Math"
+   ACED5AcadGoal "GOAL ED5 Academic:\nUnique Number of Students Who Met Performance Goal in Literacy or Math"
+   ACED1StEngGoal "GOAL ED1 Student Engagement:\nUnique Number of Students Enrolled in Attendance or Behavior"
+   ACED2StEngGoal "GOAL ED2 Student Engagement:\nUnique Number of Students Who Met Dosage in Attendance or Behavior"
+   ACED27StEngGoal "GOAL ED27 Student Engagement:\nUnique Number of Students Who Met Performance Goal in Attendance or Behavior".
+EXECUTE.
+SORT CASES BY GrantSiteNum (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY GrantSiteNum (A).
+EXECUTE.
+
+***** Merge AC goals to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = ACGoals
+   /BY GrantSiteNum.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need AC data files.
+DATASET CLOSE ACGrantIDs.
+DATASET CLOSE ACGoals.
+
+******************************************************************************************************************************************************
+***** Merge in student performance ID translation file.
+******************************************************************************************************************************************************
+
+***** Prep student ID translation file for merge.
+DATASET ACTIVATE StPerfIDs.
+***** Delete unnecessary variables.
+DELETE VARIABLES FIRST_NAME MIDDLE_NAME LAST_NAME REGION_ID REGION_NAME SITE_NAME CYCHANNEL_SCHOOL_ACCOUNT_NBR
+SCHOOL_NAME DIPLOMAS_NOW_SCHOOL GENDER GRADE_ID GRADE_DESC PRIMARY_CM_ID PRIMARY_CM_NAME CYCHANNEL_ACCOUNT_NBR
+Attendance_IA ELA_IA Math_IA Behavior_IA FISCAL_YEAR.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (CYSCHOOLHOUSE_STUDENT_ID = cyStudentID) (SITE_ID = cysdSiteID) (SCHOOL_ID = cysdSchoolID).
+***** Add variable labels for existing variables.
+VARIABLE LABELS cysdStudentID "cystudentdata: Student ID"
+   cysdSiteID "cystudentdata: Site ID"
+   cysdSchoolID "cystudentdata: School ID".
+EXECUTE.
+ALTER TYPE cysdStudentID cysdSiteID cysdSchoolID (F40.0) cyStudentID (A9).
+SORT CASES BY cyStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cyStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = StPerfIDs
+   /BY cyStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need the student ID translation file.
+DATASET CLOSE StPerfIDs.
+
+******************************************************************************************************************************************************
+***** Merge in literacy assessment performance data.
+******************************************************************************************************************************************************
+
+***** Prep literacy assessment data file for merge.
+DATASET ACTIVATE LITAssessPerf.
+***** Delete unnecessary variables.
+DELETE VARIABLES SITE_NAME SCHOOL_NAME GRADE_ID DIPLOMAS_NOW_SCHOOL SCHOOL_ID ASSESSMENT_TYPE PRE_VALUE
+PRE_TRACK_NATIONAL POST_VALUE POST_TRACK_NATIONAL DOSAGE_CATEGORY TTL_TIME ENROLLED_DAYS_CATEGORIES CURRENTLY_ENROLLED
+ENROLLED_DAYS LIT_ASSESS_RAWCHANGE LIT_ASSESS_PERCENTCHANGE STATUS_SITE_DOSAGE_GOAL SITE_DOSAGE_GOAL Attendance_IA
+ELA_IA Math_IA Behavior_IA FISCAL_YEAR INDICATOR_ID B_RULE_VAL1 B_RULE_VAL2 B_RULE_VAL3 B_RULE_VAL4 B_RULE_VAL5 GRADE_ID_RECODE
+MY_MET_MARCH_DOSAGE PROXY_DATE PROXY_DESC PROXY_VALUE_NUM PROXY_TRACK PROXY_TRACK_EVAL.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (PRE_VALUE_DISPLAY = LITAssess_PRE_VALUE_DISPLAY)
+(PRE_VALUE_NUM = LITAssess_PRE_VALUE_NUM) (PRE_DATE = LITAssess_PRE_DATE) (PRE_DESC = LITAssess_PRE_DESC)
+(PRE_TRACK_NUM = LITAssess_PRE_TRACK_NUM) (PRE_TRACK = LITAssess_PRE_TRACK) (PRE_TRACK_EVAL = LITAssess_PRE_TRACK_EVAL)
+(POST_VALUE_DISPLAY = LITAssess_POST_VALUE_DISPLAY) (POST_VALUE_NUM = LITAssess_POST_VALUE_NUM) (POST_DATE = LITAssess_POST_DATE)
+(POST_DESC = LITAssess_POST_DESC) (POST_TRACK_NUM = LITAssess_POST_TRACK_NUM)
+(POST_TRACK = LITAssess_POST_TRACK) (POST_TRACK_EVAL = LITAssess_POST_TRACK_EVAL)
+(LIT_ASSESS_RAWCHANGE_DEGREE = LITAssess_RAWCHANGE_DEG) (LIT_ASSESS_PERFORMANCECHANGE_LOCAL = LITAssess_PERFCHANGE_LOCAL)
+(LIT_ASSESS_PERFORMANCECHANGE_NORMALIZED = LITAssess_PERFCHANGE_NORM) (MY_PERF_DATE = LITAssess_MY_DATE)
+(MY_DESC = LITAssess_MY_DESC) (MY_VALUE_NUM = LITAssess_MY_VALUE_NUM) (MY_TRACK_NUM = LITAssess_MY_TRACK_NUM)
+(MY_TRACK = LITAssess_MY_TRACK) (MY_TRACK_EVAL = LITAssess_MY_TRACK_EVAL) (MY_RAWCHANGE_DEGREE = LITAssess_MY_RAWCHANGE_DEG)
+(MY_PERFORMANCECHANGE_LOCAL = LITAssess_MY_PERFCHANGE_LOCAL) (MY_PERFORMANCECHANGE_NORMALIZED = LITAssess_MY_PERFCHANGE_NORM).
+***** Add variable labels for existing variables.
+VARIABLE LABELS LITAssess_PRE_VALUE_DISPLAY "Literacy Assessments: pre raw score (display)"
+LITAssess_PRE_VALUE_NUM "Literacy Assessments: pre raw score (numeric)"
+LITAssess_PRE_DATE "Literacy Assessments: pre date"
+LITAssess_PRE_DESC "Literacy Assessments: pre assessment type"
+LITAssess_PRE_TRACK_NUM "Literacy Assessments: pre performance level (numeric)"
+LITAssess_PRE_TRACK "Literacy Assessments: pre performance level"
+LITAssess_PRE_TRACK_EVAL "Literacy Assessments: pre performance level (normalized)"
+LITAssess_POST_VALUE_DISPLAY "Literacy Assessments: post raw score (display)"
+LITAssess_POST_VALUE_NUM "Literacy Assessments: post raw score (numeric)"
+LITAssess_POST_DATE "Literacy Assessments: post date"
+LITAssess_POST_DESC "Literacy Assessments: post assessment type"
+LITAssess_POST_TRACK_NUM "Literacy Assessments: post performance level (numeric)"
+LITAssess_POST_TRACK "Literacy Assessments: post performance level"
+LITAssess_POST_TRACK_EVAL "Literacy Assessments: post performance level (normalized)"
+LITAssess_RAWCHANGE_DEG "Literacy Assessments: pre to post raw score change (degree)"
+LITAssess_PERFCHANGE_LOCAL "Literacy Assessments: pre to post change in performance level"
+LITAssess_PERFCHANGE_NORM "Literacy Assessments: pre to post change in performance level (normalized)"
+LITAssess_MY_DATE "Literacy Assessments: mid-year date"
+LITAssess_MY_DESC "Literacy Assessments: mid-year assessment type"
+LITAssess_MY_VALUE_NUM "Literacy Assessments: mid-year raw score (numeric)"
+LITAssess_MY_TRACK_NUM "Literacy Assessments: mid-year performance level (numeric)"
+LITAssess_MY_TRACK "Literacy Assessments: mid-year performance level"
+LITAssess_MY_TRACK_EVAL "Literacy Assessments: mid-year performance level (normalized)"
+LITAssess_MY_RAWCHANGE_DEG "Literacy Assessments: pre to mid-year raw score change (degree)"
+LITAssess_MY_PERFCHANGE_LOCAL "Literacy Assessments: pre to mid-year change in performance level"
+LITAssess_MY_PERFCHANGE_NORM "Literacy Assessments: pre to mid-year change in performance level (normalized)".
+EXECUTE.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = LITAssessPerf
+   /BY cysdStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need the literacy assessment dataset.
+DATASET CLOSE LITAssessPerf.
+
+******************************************************************************************************************************************************
+***** Merge in math assessment performance data.
+******************************************************************************************************************************************************
+
+***** Prep math assessment data file for merge.
+DATASET ACTIVATE MTHAssessPerf.
+***** Delete unnecessary variables.
+DELETE VARIABLES SITE_NAME SCHOOL_NAME GRADE_ID DIPLOMAS_NOW_SCHOOL SCHOOL_ID ASSESSMENT_TYPE PRE_VALUE
+PRE_TRACK_NATIONAL POST_VALUE POST_TRACK_NATIONAL DOSAGE_CATEGORY TTL_TIME ENROLLED_DAYS_CATEGORIES
+CURRENTLY_ENROLLED ENROLLED_DAYS LIT_ASSESS_RAWCHANGE LIT_ASSESS_PERCENTCHANGE STATUS_SITE_DOSAGE_GOAL
+SITE_DOSAGE_GOAL Attendance_IA ELA_IA Math_IA Behavior_IA FISCAL_YEAR INDICATOR_ID B_RULE_VAL1 B_RULE_VAL2
+B_RULE_VAL3 B_RULE_VAL4 B_RULE_VAL5 GRADE_ID_RECODE MY_MET_MARCH_DOSAGE PROXY_DATE PROXY_DESC PROXY_VALUE_NUM
+PROXY_TRACK PROXY_TRACK_EVAL.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (PRE_VALUE_DISPLAY = MTHAssess_PRE_VALUE_DISPLAY)
+(PRE_VALUE_NUM = MTHAssess_PRE_VALUE_NUM) (PRE_DATE = MTHAssess_PRE_DATE) (PRE_DESC = MTHAssess_PRE_DESC)
+(PRE_TRACK_NUM = MTHAssess_PRE_TRACK_NUM) (PRE_TRACK = MTHAssess_PRE_TRACK) (PRE_TRACK_EVAL = MTHAssess_PRE_TRACK_EVAL)
+(POST_VALUE_DISPLAY = MTHAssess_POST_VALUE_DISPLAY) (POST_VALUE_NUM = MTHAssess_POST_VALUE_NUM)
+(POST_DATE = MTHAssess_POST_DATE) (POST_DESC = MTHAssess_POST_DESC) (POST_TRACK_NUM = MTHAssess_POST_TRACK_NUM)
+(POST_TRACK = MTHAssess_POST_TRACK) (POST_TRACK_EVAL = MTHAssess_POST_TRACK_EVAL)
+(LIT_ASSESS_RAWCHANGE_DEGREE = MTHAssess_RAWCHANGE_DEG) (LIT_ASSESS_PERFORMANCECHANGE_LOCAL = MTHAssess_PERFCHANGE_LOCAL)
+(LIT_ASSESS_PERFORMANCECHANGE_NORMALIZED = MTHAssess_PERFCHANGE_NORM) (MY_PERF_DATE = MTHAssess_MY_DATE)
+(MY_DESC = MTHAssess_MY_DESC) (MY_VALUE_NUM = MTHAssess_MY_VALUE_NUM) (MY_TRACK_NUM = MTHAssess_MY_TRACK_NUM)
+(MY_TRACK = MTHAssess_MY_TRACK) (MY_TRACK_EVAL = MTHAssess_MY_TRACK_EVAL) (MY_RAWCHANGE_DEGREE = MTHAssess_MY_RAWCHANGE_DEG)
+(MY_PERFORMANCECHANGE_LOCAL = MTHAssess_MY_PERFCHANGE_LOCAL) (MY_PERFORMANCECHANGE_NORMALIZED = MTHAssess_MY_PERFCHANGE_NORM).
+***** Add variable labels for existing variables.
+VARIABLE LABELS MTHAssess_PRE_VALUE_DISPLAY "Math Assessments: pre raw score (display)"
+MTHAssess_PRE_VALUE_NUM "Math Assessments: pre raw score (numeric)"
+MTHAssess_PRE_DATE "Math Assessments: pre date"
+MTHAssess_PRE_DESC "Math Assessments: pre assessment type"
+MTHAssess_PRE_TRACK_NUM "Math Assessments: pre performance level (numeric)"
+MTHAssess_PRE_TRACK "Math Assessments: pre performance level (local)"
+MTHAssess_PRE_TRACK_EVAL "Math Assessments: pre performance level (normalized)"
+MTHAssess_POST_VALUE_DISPLAY "Math Assessments: post raw score (display)"
+MTHAssess_POST_VALUE_NUM "Math Assessments: post raw score (numeric)"
+MTHAssess_POST_DATE "Math Assessments: post date"
+MTHAssess_POST_DESC "Math Assessments: post assessment type"
+MTHAssess_POST_TRACK_NUM "Math Assessments: post performance level (numeric)"
+MTHAssess_POST_TRACK "Math Assessments: post performance level (local)"
+MTHAssess_POST_TRACK_EVAL "Math Assessments: post performance level (normalized)"
+MTHAssess_RAWCHANGE_DEG "Math Assessments: pre to post change in raw score (degree)"
+MTHAssess_PERFCHANGE_LOCAL "Math Assessments: pre to post change in performance level (local)"
+MTHAssess_PERFCHANGE_NORM "Math Assessments: pre to post change in performance level (normalized)"
+MTHAssess_MY_DATE "Math Assessments: mid-year date"
+MTHAssess_MY_DESC "Math Assessments: mid-year assessment type"
+MTHAssess_MY_VALUE_NUM "Math Assessments: mid-year raw score (numeric)"
+MTHAssess_MY_TRACK_NUM "Math Assessments: mid-year performance level (numeric)"
+MTHAssess_MY_TRACK "Math Assessments: mid-year performance level"
+MTHAssess_MY_TRACK_EVAL "Math Assessments: mid-year performance level (normalized)"
+MTHAssess_MY_RAWCHANGE_DEG "Math Assessments: pre to mid-year change in raw score (degree)"
+MTHAssess_MY_PERFCHANGE_LOCAL "Math Assessments: pre to mid-year change in performance level"
+MTHAssess_MY_PERFCHANGE_NORM "Math Assessments: pre to mid-year change in performance level (normalized)".
+EXECUTE.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = MTHAssessPerf
+   /BY cysdStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need the math assessment dataset.
+DATASET CLOSE MTHAssessPerf.
+
+******************************************************************************************************************************************************
+***** Merge in ELA CG performance data.
+******************************************************************************************************************************************************
+
+***** Prep ELA course grade data file for merge.
+DATASET ACTIVATE ELACGPerf.
+***** Delete unnecessary variables.
+DELETE VARIABLES SITE_NAME SCHOOL_NAME GRADE_ID DIPLOMAS_NOW_SCHOOL SCHOOL_ID PRE_ELA_CG_VALUE PRE_ELA_DESC
+PRE_ELA_TRACK_EVAL PRE_SCENARIO DOSAGE_CATEGORY TTL_TIME POST_ELA_CG_VALUE POST_ELA_DESC POST_ELA_TRACK_EVAL
+POST_SCENARIO CG_Change Enrollment_Duration ENROLL_DAYS STATUS_SITE_DOSAGE_GOAL SITE_DOSAGE_GOAL Attendance_IA ELA_IA
+Math_IA Behavior_IA FISCAL_YEAR INDICATOR_ID B_RULE_VAL1 B_RULE_VAL2 B_RULE_VAL3 B_RULE_VAL4 B_RULE_VAL5 GRADE_ID_RECODE
+MY_MET_MARCH_DOSAGE PROXY_ELA_FREQ PROXY_ELA_TRACK PROXY_LETTER_VIEW PROXY_CG_LETTER_SCALE_ALL OG_PROXY_ELA_CG_NUM.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (PRE_ELA_CG_VALUE_DISPLAY = ELACG_PRE_VALUE_DISPLAY)
+(PRE_ELA_CG_VALUE_NUM = ELACG_PRE_VALUE_NUM) (PRE_ELA_FREQ = ELACG_PRE_FREQ) (PRE_ELA_TRACK = ELACG_PRE_TRACK)
+(PRE_LETTER_VIEW = ELACG_PRE_LETTER_VIEW) (PRE_CG_LETTER_SCALE_ALL = ELACG_PRE_LETTER_SCALE_ALL)
+(POST_ELA_CG_VALUE_DISPLAY = ELACG_POST_VALUE_DISPLAY) (POST_ELA_CG_VALUE_NUM = ELACG_POST_VALUE_NUM)
+(POST_ELA_FREQ = ELACG_POST_FREQ) (POST_ELA_TRACK = ELACG_POST_TRACK) (POST_LETTER_VIEW = ELACG_POST_LETTER_VIEW)
+(POST_CG_LETTER_SCALE_ALL = ELACG_POST_LETTER_SCALE_ALL) (LETTERGADE_CHANGE_ACTUAL = ELACG_LTRGRD_CHANGE_ACTUAL)
+(LETTERGADE_CHANGE_GENERAL = ELACG_LTRGRD_CHANGE_GENERAL) (CG_Performance_Level_Change = ELACG_PERF_LVL_CHANGE)
+(MY_ELA_FREQ = ELACG_MY_FREQ) (MY_ELA_TRACK = ELACG_MY_TRACK) (MY_LETTER_VIEW = ELACG_MY_LETTER_VIEW)
+(MY_CG_LETTER_SCALE_ALL = ELACG_MY_LETTER_SCALE_ALL) (MY_LETTERGRADE_CHANGE_ACTUAL = ELACG_MY_LTRGRD_CHANGE_ACTUAL)
+(MY_PERF_CHANGE = ELACG_MY_PERF_LVL_CHANGE) (OG_PRE_ELA_CG_NUM = ELACG_OG_PRE_CG_NUM) (OG_POST_ELA_CG_NUM = ELACG_OG_POST_CG_NUM)
+(OG_MY_ELA_CG_NUM = ELACG_OG_MY_CG_NUM) (MY_Change = ELACG_MY_LTRGRD_CHANGE_GENERAL) (OG_MY_ELA_CG_CHANGE = ELACG_OG_MY_CHANGE)
+(OG_EOY_ELA_CG_CHANGE = ELACG_OG_EOY_CHANGE).
+***** Add variable labels for existing variables.
+VARIABLE LABELS ELACG_PRE_VALUE_DISPLAY "ELA Course Grades: pre course grade display"
+ELACG_PRE_VALUE_NUM "ELA Course Grades: pre course grade (numeric)"
+ELACG_PRE_FREQ "ELA Course Grades: pre time period"
+ELACG_PRE_TRACK "ELA Course Grades: pre performance level"
+ELACG_PRE_LETTER_VIEW "ELA Course Grades: pre letter grade"
+ELACG_PRE_LETTER_SCALE_ALL "ELA Course Grades: pre letter scale"
+ELACG_POST_VALUE_DISPLAY "ELA Course Grades: post course grade display"
+ELACG_POST_VALUE_NUM "ELA Course Grades: post course grade (numeric)"
+ELACG_POST_FREQ "ELA Course Grades: post time period"
+ELACG_POST_TRACK "ELA Course Grades: post performance level"
+ELACG_POST_LETTER_VIEW "ELA Course Grades: post letter grade"
+ELACG_POST_LETTER_SCALE_ALL "ELA Course Grades: post letter scale"
+ELACG_LTRGRD_CHANGE_ACTUAL "ELA Course Grades: pre to post change in letter grade"
+ELACG_LTRGRD_CHANGE_GENERAL "ELA Course Grades: pre to post change in letter grade (degree)"
+ELACG_PERF_LVL_CHANGE "ELA Course Grades: pre to post change in performance level"
+ELACG_MY_FREQ "ELA Course Grades: mid-year time period"
+ELACG_MY_TRACK "ELA Course Grades: mid-year performance level"
+ELACG_MY_LETTER_VIEW "ELA Course Grades: mid-year letter grade"
+ELACG_MY_LETTER_SCALE_ALL "ELA Course Grades: mid-year letter scale"
+ELACG_MY_LTRGRD_CHANGE_ACTUAL "ELA Course Grades: pre to mid-year change in letter grade"
+ELACG_MY_LTRGRD_CHANGE_GENERAL "ELA Course Grades: pre to mid-year change in letter grade (degree)"
+ELACG_MY_PERF_LVL_CHANGE "ELA Course Grades: pre to mid-year change in performance level"
+ELACG_OG_PRE_CG_NUM "ELA Course Grades: pre course grade (numeric, for operating goals)"
+ELACG_OG_POST_CG_NUM "ELA Course Grades: post course grade (numeric, for operating goals)"
+ELACG_OG_MY_CG_NUM "ELA Course Grades: mid-year course grade (numeric, for operating goals)"
+ELACG_OG_MY_CHANGE "ELA Course Grades: pre to mid-year change in course grades (operating goals)"
+ELACG_OG_EOY_CHANGE "ELA Course Grades: pre to post change in course grades (operating goals)".
+EXECUTE.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = ELACGPerf
+   /BY cysdStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need ELA course grade dataset.
+DATASET CLOSE ELACGPerf.
+
+******************************************************************************************************************************************************
+***** Merge in math CG performance data.
+******************************************************************************************************************************************************
+
+***** Prep math course grade data file for merge.
+DATASET ACTIVATE MTHCGPerf.
+***** Delete unnecessary variables.
+DELETE VARIABLES SITE_NAME SCHOOL_NAME GRADE_ID DIPLOMAS_NOW_SCHOOL SCHOOL_ID PRE_MATH_CG_VALUE PRE_MATH_DESC
+PRE_MATH_TRACK_EVAL PRE_SCENARIO POST_MATH_CG_VALUE POST_MATH_DESC POST_MATH_TRACK_EVAL POST_SCENARIO
+DOSAGE_CATEGORY TTL_TIME CG_Change Enrollment_Duration ENROLL_DAYS STATUS_SITE_DOSAGE_GOAL SITE_DOSAGE_GOAL
+Attendance_IA ELA_IA Math_IA Behavior_IA FISCAL_YEAR INDICATOR_ID B_RULE_VAL1 B_RULE_VAL2 B_RULE_VAL3 B_RULE_VAL4 B_RULE_VAL5
+GRADE_ID_RECODE MY_MET_MARCH_DOSAGE PROXY_MATH_FREQ PROXY_MATH_TRACK PROXY_LETTER_VIEW PROXY_CG_LETTER_SCALE_ALL OG_PROXY_MTH_CG_NUM.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (PRE_MATH_CG_VALUE_DISPLAY = MTHCG_PRE_VALUE_DISPLAY)
+(PRE_MATH_CG_VALUE_NUM = MTHCG_PRE_VALUE_NUM) (PRE_MATH_FREQ = MTHCG_PRE_FREQ)
+(PRE_MATH_TRACK = MTHCG_PRE_TRACK) (PRE_LETTER_VIEW = MTHCG_PRE_LETTER_VIEW)
+(PRE_CG_LETTER_SCALE_ALL = MTHCG_PRE_LETTER_SCALE_ALL) (POST_MATH_CG_VALUE_DISPLAY = MTHCG_POST_VALUE_DISPLAY)
+(POST_MATH_CG_VALUE_NUM = MTHCG_POST_VALUE_NUM) (POST_MATH_FREQ = MTHCG_POST_FREQ)
+(POST_MATH_TRACK = MTHCG_POST_TRACK) (POST_LETTER_VIEW = MTHCG_POST_LETTER_VIEW)
+(POST_CG_LETTER_SCALE_ALL = MTHCG_POST_LETTER_SCALE_ALL) (LETTERGADE_CHANGE_ACTUAL = MTHCG_LTRGRD_CHANGE_ACTUAL)
+(LETTERGADE_CHANGE_GENERAL = MTHCG_LTRGRD_CHANGE_GENERAL) (CG_Performance_Level_Change = MTHCG_PERF_LVL_CHANGE)
+(MY_MATH_FREQ = MTHCG_MY_FREQ) (MY_MATH_TRACK = MTHCG_MY_TRACK) (MY_LETTER_VIEW = MTHCG_MY_LETTER_VIEW)
+(MY_CG_LETTER_SCALE_ALL = MTHCG_MY_LETTER_SCALE_ALL) (MY_LETTERGRADE_CHANGE_ACTUAL = MTHCG_MY_LTRGRD_CHANGE_ACTUAL)
+(MY_PERF_CHANGE = MTHCG_MY_PERF_LVL_CHANGE) (OG_PRE_MTH_CG_NUM = MTHCG_OG_PRE_CG_NUM) (OG_POST_MTH_CG_NUM = MTHCG_OG_POST_CG_NUM)
+(OG_MY_MTH_CG_NUM = MTHCG_OG_MY_CG_NUM) (MY_Change = MTHCG_MY_LTRGRD_CHANGE_GENERAL) (OG_MY_MTH_CG_CHANGE = MTHCG_OG_MY_CHANGE)
+(OG_EOY_MTH_CG_CHANGE = MTHCG_OG_EOY_CHANGE).
+***** Add variable labels for existing variables.
+VARIABLE LABELS MTHCG_PRE_VALUE_DISPLAY "Math Course Grades: pre course grade display"
+MTHCG_PRE_VALUE_NUM "Math Course Grades: pre course grade (numeric)"
+MTHCG_PRE_FREQ "Math Course Grades: pre time period"
+MTHCG_PRE_TRACK "Math Course Grades: pre performance level"
+MTHCG_PRE_LETTER_VIEW "Math Course Grades: pre letter grade"
+MTHCG_PRE_LETTER_SCALE_ALL "Math Course Grades: pre letter scale"
+MTHCG_POST_VALUE_DISPLAY "Math Course Grades: post course grade display"
+MTHCG_POST_VALUE_NUM "Math Course Grades: post course grade (numeric)"
+MTHCG_POST_FREQ "Math Course Grades: post time period"
+MTHCG_POST_TRACK "Math Course Grades: post performance level"
+MTHCG_POST_LETTER_VIEW "Math Course Grades: post letter grade"
+MTHCG_POST_LETTER_SCALE_ALL "Math Course Grades: post letter scale"
+MTHCG_LTRGRD_CHANGE_ACTUAL "Math Course Grades: pre to post change in letter grade"
+MTHCG_LTRGRD_CHANGE_GENERAL "Math Course Grades: pre to post change in letter grade (degree)"
+MTHCG_PERF_LVL_CHANGE "Math Course Grades: pre to post change in performance level"
+MTHCG_MY_FREQ "Math Course Grades: mid-year time period"
+MTHCG_MY_TRACK "Math Course Grades: mid-year performance level"
+MTHCG_MY_LETTER_VIEW "Math Course Grades: mid-year letter grade"
+MTHCG_MY_LETTER_SCALE_ALL "Math Course Grades: mid-year letter scale"
+MTHCG_MY_LTRGRD_CHANGE_ACTUAL "Math Course Grades: pre to mid-year change in letter grade"
+MTHCG_MY_LTRGRD_CHANGE_GENERAL "Math Course Grades: pre to mid-year change in letter grade (degree)"
+MTHCG_PERF_LVL_CHANGE "Math Course Grades: pre to mid-year change in performance level"
+MTHCG_OG_PRE_CG_NUM "Math Course Grades: pre course grade (numeric, for operating goals)"
+MTHCG_OG_POST_CG_NUM "Math Course Grades: post course grade (numeric, for operating goals)"
+MTHCG_OG_MY_CG_NUM "Math Course Grades: mid-year course grade (numeric, for operating goals)"
+MTHCG_OG_MY_CHANGE "Math Course Grades: pre to mid-year change in course grades (operating goals)"
+MTHCG_OG_EOY_CHANGE "Math Course Grades: pre to post change in course grades (operating goals)".
+EXECUTE.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = MTHCGPerf
+   /BY cysdStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need the math course grade dataset.
+DATASET CLOSE MTHCGPerf.
+
+******************************************************************************************************************************************************
+***** Merge in attendance performance data.
+******************************************************************************************************************************************************
+
+***** Prep attendance performance data file for merge.
+DATASET ACTIVATE ATTPerf.
+***** Delete unnecessary variables.
+DELETE VARIABLES SITE_NAME SCHOOL_NAME GRADE_ID DIPLOMAS_NOW_SCHOOL SCHOOL_ID PRE_SKILL_DESC PRE_SCENARIO
+PRE_ATT_TRACK_EVAL PRE_INVALID_ADA POST_SKILL_DESC POST_SCENARIO POST_ATT_TRACK_EVAL POST_INVALID_ADA DOSAGE_CATEGORY
+TTL_TIME ENROLLED_DAYS_CATEGORIES CURRENTLY_ENROLLED ENROLLED_DAYS ATT_PERFORMANCE_CHANGE_NATIONAL
+ATT_ADA_CHANGE_TYPE Attendance_IA ELA_IA Math_IA Behavior_IA FISCAL_YEAR INDICATOR_ID B_RULE_VAL1 B_RULE_VAL2 B_RULE_VAL3 B_RULE_VAL4
+B_RULE_VAL5 GRADE_ID_RECODE EOY_MET_56_DAYS PROXY_ATTMP_FREQ_DESC PROXY_ATTMP_ADA PROXY_ATTMP_TRACK PROXY_ATTDJFM_ADA
+PROXY_ATTDJFM_TRACK PROXY_ATTCUMUL_ADA PROXY_ATTCUMUL_TRACK.
+***** Rename linking ID variable.
+RENAME VARIABLES (STUDENT_ID = cysdStudentID) (PRE_FREQ_DESC = ATT_PRE_FREQ_DESC) (PRE_ATT_ADA = ATT_PRE_ADA)
+(PRE_ATT_SCHOOL_OPEN = ATT_PRE_SCHOOL_OPEN) (PRE_ATT_MISSING = ATT_PRE_MISSING) (PRE_ATT_NOT_ENROLLED = ATT_PRE_NOT_ENROLLED)
+(PRE_ATT_TRACK = ATT_PRE_TRACK) (POST_FREQ_DESC = ATT_POST_FREQ_DESC) (POST_ATT_ADA = ATT_POST_ADA)
+(POST_ATT_SCHOOL_OPEN = ATT_POST_SCHOOL_OPEN) (POST_ATT_MISSING = ATT_POST_MISSING)
+(POST_ATT_NOT_ENROLLED = ATT_POST_NOT_ENROLLED) (POST_ATT_TRACK = ATT_POST_TRACK) (ATT_ADA_CHANGE = ATT_ADA_CHANGE)
+(EOY_ATT_ADA_CHANGE_TYPE = ATT_ADA_CHANGE_TYPE) (EOY_ATT_INC_BY_2_PERC_PT = ATT_INC_BY_2_PERC_PT)
+(ATT_PERFORMANCE_CHANGE_LOCAL = ATT_PERF_CHANGE_LOCAL) (OG_EOY_LT_90_TO_GTE = ATT_OG_EOY_LT_90_TO_GTE)
+(MY_FREQ_DESC = ATT_MY_FREQ_DESC) (MY_ADA = ATT_MY_ADA) (MY_TRACK = ATT_MY_TRACK) (MY_ADA_CHANGE = ATT_MY_ADA_CHANGE)
+(MY_ATT_PERFORMANCE_CHANGE_LOCAL = ATT_MY_PERF_CHANGE_LOCAL) (OG_MY_LT_90_TO_GTE = ATT_OG_MY_LT_90_TO_GTE)
+(MY_ATT_ADA_CHANGE_TYPE = ATT_MY_ADA_CHANGE_TYPE) (MY_ATT_INC_BY_2_PERC_PT = ATT_MY_INC_BY_2_PERC_PT).
+***** Add value labels for existing variables.
+VALUE LABELS ATT_INC_BY_2_PERC_PT 0 "Did not increase ADA by at least 2 percentage points"
+   1 "Increased ADA by at least 2 percentage points".
+EXECUTE.
+***** Add variable labels for existing variables.
+VARIABLE LABELS ATT_PRE_FREQ_DESC "Attendance: pre time period"
+ATT_PRE_ADA "Attendance: pre average daily attendance"
+ATT_PRE_SCHOOL_OPEN "Attendance: pre number of days school open"
+ATT_PRE_MISSING "Attendance: pre number of days missed"
+ATT_PRE_NOT_ENROLLED "Attendance: pre number of days not enrolled"
+ATT_PRE_TRACK "Attendance: pre performance level"
+ATT_POST_FREQ_DESC "Attendance: post time period"
+ATT_POST_ADA "Attendance: post average daily attendance"
+ATT_POST_SCHOOL_OPEN "Attendance: post number of days school open"
+ATT_POST_MISSING "Attendance: post number of days missed"
+ATT_POST_NOT_ENROLLED "Attendance: post number of days not enrolled"
+ATT_POST_TRACK "Attendance: post performance level"
+ATT_ADA_CHANGE "Attendance: pre to post change in average daily attendance"
+ATT_ADA_CHANGE_TYPE "Attendance: pre to post change in average daily attendance (degree)"
+ATT_INC_BY_2_PERC_PT "Attendance: pre to post increase in ADA by at least 2 percentage points?"
+ATT_PERF_CHANGE_LOCAL "Attendance: pre to post change in performance level"
+ATT_OG_EOY_LT_90_TO_GTE "Attendance: did the student start with <90% ADA and move to >=90% ADA?"
+ATT_MY_FREQ_DESC "Attendance: mid-year time period"
+ATT_MY_ADA "Attendance: mid-year average daily attendance"
+ATT_MY_TRACK "Attendance: mid-year performance level"
+ATT_MY_ADA_CHANGE "Attendance: pre to mid-year change in average daily attendance"
+ATT_MY_ADA_CHANGE_TYPE "Attendance: pre to mid-year change in average daily attendance (degree)"
+ATT_MY_INC_BY_2_PERC_PT "Attendance: pre to mid-year increase in ADA by at least 2 percentage points?"
+ATT_MY_PERF_CHANGE_LOCAL "Attendance: pre to mid-year change in performance level"
+ATT_OG_MY_LT_90_TO_GTE "Attendance: did the student start with <90% ADA and move to >= 90% ADA at mid-year?".
+EXECUTE.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Prep final dataset for merge.
+DATASET ACTIVATE FINALDATASET.
+SORT CASES BY cysdStudentID (A).
+EXECUTE.
+
+***** Merge student IDs to final dataset.
+MATCH FILES /FILE = FINALDATASET
+   /TABLE = ATTPerf
+   /BY cysdStudentID.
+DATASET NAME FINALDATASET.
+EXECUTE.
+
+***** No longer need the attendance dataset.
+DATASET CLOSE ATTPerf.
 
 ******************************************************************************************************************************************************
 ***** Calculate Met/Not Met Enrollment and Dosage Variables.
@@ -815,6 +1374,285 @@ VALUE LABELS NotFLMTHMetJUNDose 0 "Did not meet JUNE math dosage goal"
 ******************************************************************************************************************************************************
 
 ******************************************************************************************************************************************************
+***** Calculate additional variables -- FOR LEAD MEASURES AND OPERATING GOALS.
+******************************************************************************************************************************************************
+
+***** LEAD MEASURES.
+*****     80% of students on Lit/ELA and Math Focus Lists fit the definition of off-track or sliding off-track.
+*****     For 3rd-5th grade only look at assessments, for 6th-9th grade look at assessments OR course grades.
+*****          ELA.
+IF ((StudentGrade >= 3 & StudentGrade <= 5 & DNSchool = 0 & LITOfficialFL = 1 & (LITAssess_PRE_TRACK_EVAL = "SLIDING" | 
+LITAssess_PRE_TRACK_EVAL = "OFF TRACK")) | (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 &
+(LITAssess_PRE_TRACK_EVAL = "SLIDING" | LITAssess_PRE_TRACK_EVAL = "OFF TRACK" | ELACG_PRE_TRACK = "SLIDING" |
+ELACG_PRE_TRACK = "OFF TRACK"))) LEAD_LIT39_SOS = 1.
+EXECUTE.
+IF (MISSING(LEAD_LIT39_SOS) & ((StudentGrade >= 3 & StudentGrade <= 5 & DNSchool = 0 & LITOfficialFL = 1 &
+(LITAssess_PRE_TRACK_EVAL = "ON TRACK")) | (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 &
+(LITAssess_PRE_TRACK_EVAL = "ON TRACK" | ELACG_PRE_TRACK = "ON TRACK")))) LEAD_LIT39_SOS = 0.
+*****          MTH.
+IF ((StudentGrade >= 3 & StudentGrade <= 5 & DNSchool = 0 & MTHOfficialFL = 1 & (MTHAssess_PRE_TRACK_EVAL = "SLIDING" | 
+MTHAssess_PRE_TRACK_EVAL = "OFF TRACK")) | (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 &
+(MTHAssess_PRE_TRACK_EVAL = "SLIDING" | MTHAssess_PRE_TRACK_EVAL = "OFF TRACK" | MTHCG_PRE_TRACK = "SLIDING" |
+MTHCG_PRE_TRACK = "OFF TRACK"))) LEAD_MTH39_SOS = 1.
+EXECUTE.
+IF (MISSING(LEAD_MTH39_SOS) & ((StudentGrade >= 3 & StudentGrade <= 5 & DNSchool = 0 & MTHOfficialFL = 1 &
+(MTHAssess_PRE_TRACK_EVAL = "ON TRACK")) | (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 &
+(MTHAssess_PRE_TRACK_EVAL = "ON TRACK" | MTHCG_PRE_TRACK = "ON TRACK")))) LEAD_MTH39_SOS = 0.
+*****     50% of students on Attendance Focus List fit the definition of off-track or sliding off-track.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & ATTOfficialFL = 1 & ATT_PRE_ADA < 0.9) LEAD_ATT69_StartLT90ADA = 1.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & ATTOfficialFL = 1 & ATT_PRE_ADA >= 0.9) LEAD_ATT69_StartLT90ADA = 0.
+VARIABLE LABELS LEAD_LIT39_SOS "Lead Measure: Literacy FL Composition: Students starting off-track/sliding"
+   LEAD_MTH39_SOS "Lead Measure: Math FL Composition: Students starting off-track/sliding"
+   LEAD_ATT69_StartLT90ADA "Lead Measure: Attendance FL Composition: Students starting with less than 90% ADA".
+EXECUTE.
+
+***** Lead Measure breakdown (not necessary for attendance, since there's no overlap in measures).
+*****     Literacy assessments.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & LITAssess_PRE_TRACK_EVAL ~= "") LITAssess_FLComp_SampleSize = 1.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & LITAssess_PRE_TRACK_EVAL = "") LITAssess_FLComp_SampleSize = 0.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & (LITAssess_PRE_TRACK_EVAL = "SLIDING" |
+LITAssess_PRE_TRACK_EVAL = "OFF TRACK")) LITAssess_FLComp_SOS = 1.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & LITAssess_PRE_TRACK_EVAL = "ON TRACK") LITAssess_FLComp_SOS = 0.
+*****     ELA course grades.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & ELACG_PRE_TRACK ~= "") ELACG_FLComp_SampleSize = 1.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & ELACG_PRE_TRACK = "") ELACG_FLComp_SampleSize = 0.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & (ELACG_PRE_TRACK = "SLIDING" |
+ELACG_PRE_TRACK = "OFF TRACK")) ELACG_FLComp_SOS = 1.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & LITOfficialFL = 1 & ELACG_PRE_TRACK = "ON TRACK") ELACG_FLComp_SOS = 0.
+*****     Math assessments.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHAssess_PRE_TRACK_EVAL ~= "") MTHAssess_FLComp_SampleSize = 1.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHAssess_PRE_TRACK_EVAL = "") MTHAssess_FLComp_SampleSize = 0.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & (MTHAssess_PRE_TRACK_EVAL = "SLIDING" |
+MTHAssess_PRE_TRACK_EVAL = "OFF TRACK")) MTHAssess_FLComp_SOS = 1.
+IF (StudentGrade >= 3 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHAssess_PRE_TRACK_EVAL = "ON TRACK") MTHAssess_FLComp_SOS = 0.
+*****     Math course grades.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHCG_PRE_TRACK ~= "") MTHCG_FLComp_SampleSize = 1.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHCG_PRE_TRACK = "") MTHCG_FLComp_SampleSize = 0.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & (MTHCG_PRE_TRACK = "SLIDING" |
+MTHCG_PRE_TRACK = "OFF TRACK")) MTHCG_FLComp_SOS = 1.
+IF (StudentGrade >= 6 & StudentGrade <= 9 & DNSchool = 0 & MTHOfficialFL = 1 & MTHCG_PRE_TRACK = "ON TRACK") MTHCG_FLComp_SOS = 0.
+
+***** Addendum to Lead Measure Reports: Student-Level Analysis, Distance to Dosage Targets.
+*****     Creating ELA Distance between Dosage Goals and Dosage Actuals.
+COMPUTE JAN.ELA.GoalDistance.0t25 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT <=(0.25*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.0t25=1.
+COMPUTE JAN.ELA.GoalDistance.25t.5 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT <=(0.5*JAN.ELA.DosageGoal.Minutes) & TotalDosage.LIT >(0.25*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.25t.5=1.
+COMPUTE JAN.ELA.GoalDistance.5t.75 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT <=(0.75*JAN.ELA.DosageGoal.Minutes) & TotalDosage.LIT >(0.5*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.5t.75=1.
+COMPUTE JAN.ELA.GoalDistance.75to1 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT < JAN.ELA.DosageGoal.Minutes & TotalDosage.LIT >(0.75*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.75to1 =1.
+COMPUTE JAN.ELA.GoalDistance.1to1.25 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT >=JAN.ELA.DosageGoal.Minutes & TotalDosage.LIT <(1.25*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.1to1.25 =1.
+COMPUTE JAN.ELA.GoalDistance.1.25to1.5 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT >= (1.25*JAN.ELA.DosageGoal.Minutes) & TotalDosage.LIT <(1.5*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.1.25to1.5 =1.
+COMPUTE JAN.ELA.GoalDistance.1.5to1.75 =0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT >= (1.5*JAN.ELA.DosageGoal.Minutes) & TotalDosage.LIT <(1.75*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.1.5to1.75 =1.
+COMPUTE JAN.ELA.GoalDistance.1.75up=0.
+if  ( LITOfficialFL = 1 AND (TotalDosage.LIT >= (1.75*JAN.ELA.DosageGoal.Minutes))) JAN.ELA.GoalDistance.1.75up=1.
+*****     Create sample size variable.
+COMPUTE JAN.ELA.GoalDistance.SampleSize= Sum(JAN.ELA.GoalDistance.0t25, JAN.ELA.GoalDistance.25t.5, JAN.ELA.GoalDistance.5t.75, JAN.ELA.GoalDistance.75to1,
+JAN.ELA.GoalDistance.1to1.25, JAN.ELA.GoalDistance.1.25to1.5, JAN.ELA.GoalDistance.1.5to1.75, JAN.ELA.GoalDistance.1.75up).
+
+VARIABLE LABELS JAN.ELA.GoalDistance.0t25 "Missed Dosage Goal by 75% or more"
+JAN.ELA.GoalDistance.25t.5 "Missed Dosage Goal by 50% to 74.99%"
+JAN.ELA.GoalDistance.5t.75 "Missed Dosage Goal by 25% to 49.99%" 
+JAN.ELA.GoalDistance.75to1 "Missed Dosage Goal by 0.01% to 24.99%" 
+JAN.ELA.GoalDistance.1to1.25 "Met or Exceeded Dosage Goal up to 25%"
+JAN.ELA.GoalDistance.1.25to1.5 "Exceeded Dosage Goal by 25% to 49.99%" 
+JAN.ELA.GoalDistance.1.5to1.75 "Exceeded Dosage Goal by 50% to 74.99%"
+JAN.ELA.GoalDistance.1.75up "Exceeded Dosage Goal by 75% or more "
+JAN.ELA.GoalDistance.SampleSize 'Total Number of Students with Calculated Goal Distance'.
+VALUE LABELS JAN.ELA.GoalDistance.0t25 JAN.ELA.GoalDistance.25t.5 JAN.ELA.GoalDistance.5t.75 JAN.ELA.GoalDistance.75to1
+JAN.ELA.GoalDistance.1to1.25 JAN.ELA.GoalDistance.1.25to1.5 JAN.ELA.GoalDistance.1.5to1.75
+JAN.ELA.GoalDistance.1.75up 0 'Not in this category' 1 'In this category'.
+
+COMPUTE JAN.ELA.RawGoalDistance= 99.
+if LITOfficialFL = 1 Jan.ELA.RawGoalDistance=(TotalDosage.LIT-JAN.ELA.DosageGoal.Minutes)/60.
+RECODE JAN.ELA.RawGoalDistance (99=SYSMIS).
+VARIABLE LABELS JAN.ELA.RawGoalDistance 'Hours between January Dosage Actual and Goal'.
+
+*****     Creating Math Distance between Dosage Goals and Dosage Actuals.
+COMPUTE JAN.MTH.GoalDistance.0t25 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH <=(0.25*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.0t25=1.
+COMPUTE JAN.MTH.GoalDistance.25t.5 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH <=(0.5*JAN.MTH.DosageGoal.Minutes) & TotalDosage.LIT >(0.25*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.25t.5=1.
+COMPUTE JAN.MTH.GoalDistance.5t.75 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH <=(0.75*JAN.MTH.DosageGoal.Minutes) & TotalDosage.LIT >(0.5*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.5t.75=1.
+COMPUTE JAN.MTH.GoalDistance.75to1 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH < JAN.MTH.DosageGoal.Minutes & TotalDosage.LIT >(0.75*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.75to1 =1.
+COMPUTE JAN.MTH.GoalDistance.1to1.25 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH >=JAN.MTH.DosageGoal.Minutes & TotalDosage.LIT <(1.25*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.1to1.25 =1.
+COMPUTE JAN.MTH.GoalDistance.1.25to1.5 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH>= (1.25*JAN.MTH.DosageGoal.Minutes) & TotalDosage.LIT <(1.5*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.1.25to1.5 =1.
+COMPUTE JAN.MTH.GoalDistance.1.5to1.75 =0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH >= (1.5*JAN.MTH.DosageGoal.Minutes) & TotalDosage.LIT <(1.75*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.1.5to1.75 =1.
+COMPUTE JAN.MTH.GoalDistance.1.75up=0.
+if  ( MTHOfficialFL = 1 AND (TotalDosage.MTH >= (1.75*JAN.MTH.DosageGoal.Minutes))) JAN.MTH.GoalDistance.1.75up=1.
+*****     Create sample size variable.
+COMPUTE JAN.MTH.GoalDistance.SampleSize= Sum(JAN.MTH.GoalDistance.0t25, JAN.MTH.GoalDistance.25t.5, JAN.MTH.GoalDistance.5t.75, JAN.MTH.GoalDistance.75to1,
+JAN.MTH.GoalDistance.1to1.25, JAN.MTH.GoalDistance.1.25to1.5, JAN.MTH.GoalDistance.1.5to1.75, JAN.MTH.GoalDistance.1.75up).
+
+VARIABLE LABELS JAN.MTH.GoalDistance.0t25 "Missed Dosage Goal by 75% or more"
+JAN.MTH.GoalDistance.25t.5 "Missed Dosage Goal by 50% to 74.99%"
+JAN.MTH.GoalDistance.5t.75 "Missed Dosage Goal by 25% to 49.99%" 
+JAN.MTH.GoalDistance.75to1 "Missed Dosage Goal by 0.01% to 24.99%" 
+JAN.MTH.GoalDistance.1to1.25 "Met or Exceeded Dosage Goal up to 25%"
+JAN.MTH.GoalDistance.1.25to1.5 "Exceeded Dosage Goal by 25% to 49.99%" 
+JAN.MTH.GoalDistance.1.5to1.75 "Exceeded Dosage Goal by 50% to 74.99%"
+JAN.MTH.GoalDistance.1.75up "Exceeded Dosage Goal by 75% or more "
+JAN.MTH.GoalDistance.SampleSize 'Total Number of Students with Calculated Goal Distance'.
+VALUE LABELS JAN.MTH.GoalDistance.0t25 JAN.MTH.GoalDistance.25t.5 JAN.MTH.GoalDistance.5t.75 JAN.MTH.GoalDistance.75to1  
+JAN.MTH.GoalDistance.1to1.25 JAN.MTH.GoalDistance.1.25to1.5 JAN.MTH.GoalDistance.1.5to1.75
+JAN.MTH.GoalDistance.1.75up 0 'Not in this category' 1 'In this category'.
+
+COMPUTE JAN.MTH.RawGoalDistance= 99.
+if LITOfficialFL = 1 Jan.MTH.RawGoalDistance=(TotalDosage.LIT-JAN.MTH.DosageGoal.Minutes)/60.
+RECODE JAN.MTH.RawGoalDistance (99=SYSMIS).
+VARIABLE LABELS JAN.MTH.RawGoalDistance 'Hours between January Dosage Actual and Goal'.
+
+***** INSERT OPERATING GOALS SYNTAX HERE.
+
+******************************************************************************************************************************************************
+***** Calculate additional variables -- FOR AC REPORTING.
+******************************************************************************************************************************************************
+
+***** Create separate dosage variables for AC reporting, since we're not sure that they'll be the same as the ones for internal reporting.
+*****     AmeriCorps - June Dosage Goals - FULL DOSAGE.
+COMPUTE AC.ELA.DosageGoal.Minutes = JUN.ELA.DosageGoal.Minutes.
+COMPUTE AC.MTH.DosageGoal.Minutes = JUN.MTH.DosageGoal.Minutes.
+EXECUTE.
+*****     Override goals for DN Schools to 6 hours, as stated in AC grants.
+IF (DNSchool = 1) AC.ELA.DosageGoal.Minutes = 360.
+IF (DNSchool = 1) AC.MTH.DosageGoal.Minutes = 360.
+EXECUTE.
+*****     Convert final goals to hours.
+COMPUTE AC.ELA.DosageGoal.Hours = AC.ELA.DosageGoal.Minutes / 60.
+COMPUTE AC.MTH.DosageGoal.Hours = AC.MTH.DosageGoal.Minutes / 60.
+EXECUTE.
+
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= AC.ELA.DosageGoal.Minutes)) LITMetACDose = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < AC.ELA.DosageGoal.Minutes)) LITMetACDose = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= JUN.MTH.DosageGoal.Minutes)) MTHMetACDose = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < JUN.MTH.DosageGoal.Minutes)) MTHMetACDose = 0.
+VARIABLE LABELS LITMetACDose "Number of Students Meeting ELA/Literacy AMERICORPS Dosage Benchmark (with overlap)"
+   MTHMetACDose "Number of Students Meeting Math AMERICORPS Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetACDose 0 "Did not meet AMERICORPS literacy dosage goal"
+   1 "Met AMERICORPS literacy dosage goal".
+VALUE LABELS MTHMetACDose 0 "Did not meet AMERICORPS math dosage goal"
+   1 "Met AMERICORPS math dosage goal".
+
+***** Create half-dosage variables for AC purposes.
+*****     AmeriCorps - June Dosage Goals - STUDENTS MEETING HALFWAY DOSAGE POINT.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT >= AC.ELA.DosageGoal.Minutes * 0.5)) LITMetACDoseHALF = 1.
+IF (LITOfficialFL = 1 & (TotalDosage.LIT < AC.ELA.DosageGoal.Minutes * 0.5)) LITMetACDoseHALF = 0.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH >= AC.MTH.DosageGoal.Minutes * 0.5)) MTHMetACDoseHALF = 1.
+IF (MTHOfficialFL = 1 & (TotalDosage.MTH < AC.MTH.DosageGoal.Minutes * 0.5)) MTHMetACDoseHALF = 0.
+VARIABLE LABELS LITMetACDoseHALF "Number of Students Meeting HALF ELA/Literacy AMERICORPS Dosage Benchmark (with overlap)"
+   MTHMetACDoseHALF "Number of Students Meeting HALF Math AMERICORPS Dosage Benchmark (with overlap)".
+VALUE LABELS LITMetACDoseHALF 0 "Did not meet HALF AMERICORPS literacy dosage goal"
+   1 "Met HALF AMERICORPS literacy dosage goal".
+VALUE LABELS MTHMetACDoseHALF 0 "Did not meet HALF AMERICORPS math dosage goal"
+   1 "Met HALF AMERICORPS math dosage goal".
+
+***** Enrolled in LIT or MTH.
+IF (ACreportLIT = 1) ACLITOfficialFL = LITOfficialFL.
+IF (ACreportMTH = 1) ACMTHOfficialFL = MTHOfficialFL.
+EXECUTE.
+IF ((ACLITOfficialFL = 1) | (ACMTHOfficialFL = 1)) ACLITorMTHOfficialFL = 1.
+IF ((ACLITorMTHOfficialFL ~= 1) & (ACLITOfficialFL = 0 | ACMTHOfficialFL = 0)) ACLITorMTHOfficialFL = 0.
+EXECUTE.
+VARIABLE LABELS ACLITOfficialFL "Non-unique number of students enrolled on official focus lists for literacy (AC reporting)"
+   ACMTHOfficialFL "Non-unique number of students enrolled on official focus lists for math (AC reporting)"
+   ACLITorMTHOfficialFL "ACTUAL ED1 Academic:\nUnique number of students enrolled on official focus lists for literacy and/or math".
+VALUE LABELS ACLITOfficialFL 0 "AmeriCorps Reporting: Did not meet official focus list criteria for literacy"
+   1 "AmeriCorps Reporting: On official focus list for literacy".
+VALUE LABELS ACMTHOfficialFL 0 "AmeriCorps Reporting: Did not meet official focus list criteria for math"
+   1 "AmeriCorps Reporting: On official focus list for math".
+VALUE LABELS ACLITorMTHOfficialFL 0 "AmeriCorps Reporting: Did not meet official focus list criteria for literacy or math"
+   1 "AmeriCorps Reporting: On official focus list for literacy and/or math".
+EXECUTE.
+
+***** Met Enroll/Dosage for LIT or MTH.
+IF (ACLITOfficialFL = 1) ACLITMetACDose = LITMetACDose.
+IF (ACMTHOfficialFL = 1) ACMTHMetACDose = MTHMetACDose.
+EXECUTE.
+IF (ACLITMetACDose = 1 | ACMTHMetACDose = 1) ACLITorMTHMetACDose = 1.
+IF (ACLITorMTHMetACDose ~= 1 & (ACLITMetACDose = 0 | ACMTHMetACDose = 0)) ACLITorMTHMetACDose = 0.
+EXECUTE.
+VARIABLE LABELS ACLITMetACDose "Non-unique number of students on official focus lists who met dosage thresholds for literacy (AC reporting)"
+   ACMTHMetACDose "Non-unique number of students on official focus lists who met dosage thresholds for math (AC reporting)"
+   ACLITorMTHMetACDose "ACTUAL ED2 Academic:\nUnique number of students on official focus lists who met final dosage thresholds for literacy and/or math".
+VALUE LABELS ACLITMetACDose 0 "AmeriCorps Reporting: Official focus list, did not meet dosage threshold for literacy"
+   1 "AmeriCorps Reporting: Official focus list, met dosage threshold for literacy".
+VALUE LABELS ACMTHMetACDose 0 "AmeriCorps Reporting: Official focus list, did not meet dosage threshold for math"
+   1 "AmeriCorps Reporting: Official focus list, met dosage threshold for math".
+VALUE LABELS ACLITorMTHMetACDose 0 "On official focus list for literacy and/or math, did not meet dosage threshold"
+   1 "On official focus list for literacy and/or math, met dosage threshold".
+EXECUTE.
+
+***** Met Enroll/HALF DOSAGE for LIT or MTH.
+IF (ACLITOfficialFL = 1) ACLITMetACDoseHALF = LITMetACDoseHALF.
+IF (ACMTHOfficialFL = 1) ACMTHMetACDoseHALF = MTHMetACDoseHALF.
+EXECUTE.
+IF (ACLITMetACDoseHALF = 1 | ACMTHMetACDoseHALF = 1) ACLITorMTHMetACDoseHALF = 1.
+IF (ACLITorMTHMetACDoseHALF ~= 1 & (ACLITMetACDoseHALF = 0 | ACMTHMetACDoseHALF = 0)) ACLITorMTHMetACDoseHALF = 0.
+EXECUTE.
+VARIABLE LABELS ACLITMetACDoseHALF "Non-unique number of students on official focus lists who met HALF dosage thresholds for literacy (AC reporting)"
+   ACMTHMetACDoseHALF "Non-unique number of students on official focus lists who met HALF dosage thresholds for math (AC reporting)"
+   ACLITorMTHMetACDoseHALF "Unique number of students on official focus lists who met HALF dosage thresholds for literacy and/or math".
+VALUE LABELS ACLITMetACDoseHALF 0 "AmeriCorps Reporting: Official focus list, did not meet HALF dosage threshold for literacy"
+   1 "AmeriCorps Reporting: Official focus list, met HALF dosage threshold for literacy".
+VALUE LABELS ACMTHMetACDoseHALF 0 "AmeriCorps Reporting: Official focus list, did not meet HALF dosage threshold for math"
+   1 "AmeriCorps Reporting: Official focus list, met HALF dosage threshold for math".
+VALUE LABELS ACLITorMTHMetACDoseHALF 0 "On official focus list for literacy and/or math, did not meet HALF dosage threshold"
+   1 "On official focus list for literacy and/or math, met HALF dosage threshold".
+EXECUTE.
+
+***** Enrolled in ATT or BEH.
+IF (ACreportATT = 1) ACATTOfficialFL = ATTOfficialFL.
+IF (ACreportBEH = 1) ACBEHOfficialFL = BEHOfficialFL.
+EXECUTE.
+IF (ACATTOfficialFL = 1 | ACBEHOfficialFL = 1) ACATTorBEHOfficialFL = 1.
+IF ((ACATTorBEHOfficialFL ~= 1) & (ACATTOfficialFL = 0 | ACBEHOfficialFL = 0)) ACATTorBEHOfficialFL = 0.
+EXECUTE.
+VARIABLE LABELS ACATTOfficialFL "Non-unique number of students enrolled on official focus lists for attendance (AC reporting)"
+   ACBEHOfficialFL "Non-unique number of students enrolled on official focus lists for behavior (AC reporting)"
+   ACATTorBEHOfficialFL "ACTUAL ED1 Student Engagement:\nUnique number of students enrolled on official focus lists for attendance and/or behavior".
+VALUE LABELS ACATTOfficialFL 0 "AmeriCorps Reporting: Did not meet official focus list criteria for attendance"
+   1 "AmeriCorps Reporting: Met official focus list criteria for attendance".
+VALUE LABELS ACBEHOfficialFL 0 "AmeriCorps Reporting: Did not meet official focus list criteria for behavior"
+   1 "AmeriCorps Reporting: Met official focus list criteria for behavior".
+VALUE LABELS ACATTorBEHOfficialFL 0 "AmeriCorps: Did not meet official focus list criteria for attendance or behavior"
+   1 "AmeriCorps: On official focus list for attendance and/or behavior".
+EXECUTE.
+
+***** Met Enroll/Dosage for ATT or BEH.
+IF (ACATTOfficialFL = 1) ACATTMet56Dose = ATTMet56Dose.
+IF (ACBEHOfficialFL = 1) ACBEHMet56Dose = BEHMet56Dose.
+EXECUTE.
+IF (ACATTMet56Dose = 1 | ACBEHMet56Dose = 1) ACATTorBEHMet56Dose = 1.
+IF (ACATTorBEHMet56Dose ~= 1 & (ACATTMet56Dose = 0 | ACBEHMet56Dose = 0)) ACATTorBEHMet56Dose = 0.
+EXECUTE.
+VARIABLE LABELS ACATTMet56Dose "Non-unique number of students on official focus lists who met dosage thresholds for attendance (AC reporting)"
+   ACBEHMet56Dose "Non-unique number of students on official focus lists who met dosage thresholds for behavior (AC reporting)"
+   ACATTorBEHMet56Dose "ACTUAL ED2 Student Engagement:\nUnique number of students on official focus lists who met dosage thresholds for attendance and/or behavior".
+VALUE LABELS ACATTMet56Dose 0 "AmeriCorps Reporting: Official focus list, did not meet dosage threshold for attendance"
+   1 "AmeriCorps Reporting: Official focus list, met dosage threshold for attendance".
+VALUE LABELS ACBEHMet56Dose 0 "AmeriCorps Reporting: Official focus list, did not meet dosage threshold for behavior"
+   1 "AmeriCorps Reporting: Official focus list, met dosage threshold for behavior".
+VALUE LABELS ACATTorBEHMet56Dose 0 "AmeriCorps: On official focus list for attendance and/or behavior, did not meet dosage threshold"
+   1 "AmeriCorps: On official focus list for attendance and/or behavior, met dosage threshold".
+EXECUTE.
+
+***** What grade levels are we reporting on for AmeriCorps?.
+DO IF (ACLITorMTHOfficialFL = 1 | ACATTorBEHOfficialFL = 1).
+COMPUTE ACStudentGrade = StudentGrade.
+END IF.
+VARIABLE LABELS ACStudentGrade "Student Grade Levels".
+EXECUTE.
+
+******************************************************************************************************************************************************
 ***** Create additional variables.
 ******************************************************************************************************************************************************
 
@@ -993,7 +1831,39 @@ AGGREGATE /OUTFILE = FINALTEAMDATASET39ONLY
    /NotFLLITMetJUNDose = SUM(NotFLLITMetJUNDose)
    /NotFLMTHMetJUNDose = SUM(NotFLMTHMetJUNDose)
    /NotFLATTMet56Dose = SUM(NotFLATTMet56Dose)
-   /NotFLBEHMet56Dose = SUM(NotFLBEHMet56Dose).
+   /NotFLBEHMet56Dose = SUM(NotFLBEHMet56Dose)
+   /LEAD_LIT39_SampleSize = NU(LEAD_LIT39_SOS)
+   /LEAD_MTH39_SampleSize = NU(LEAD_MTH39_SOS)
+   /LEAD_ATT69_SampleSize = NU(LEAD_ATT69_StartLT90ADA)
+   /LEAD_LIT39_SOS = SUM(LEAD_LIT39_SOS)
+   /LEAD_MTH39_SOS = SUM(LEAD_MTH39_SOS)
+   /LEAD_ATT69_StartLT90ADA = SUM(LEAD_ATT69_StartLT90ADA)
+   /LITAssess_FLComp_SampleSize = SUM(LITAssess_FLComp_SampleSize)
+   /LITAssess_FLComp_SOS = SUM(LITAssess_FLComp_SOS)
+   /ELACG_FLComp_SampleSize = SUM(ELACG_FLComp_SampleSize)
+   /ELACG_FLComp_SOS = SUM(ELACG_FLComp_SOS)
+   /MTHAssess_FLComp_SampleSize = SUM(MTHAssess_FLComp_SampleSize)
+   /MTHAssess_FLComp_SOS = SUM(MTHAssess_FLComp_SOS)
+   /MTHCG_FLComp_SampleSize = SUM(MTHCG_FLComp_SampleSize)
+   /MTHCG_FLComp_SOS = SUM(MTHCG_FLComp_SOS)
+   /JAN.ELA.GoalDistance.0t25 =SUM(JAN.ELA.GoalDistance.0t25)
+   /JAN.ELA.GoalDistance.25t.5 =SUM(JAN.ELA.GoalDistance.25t.5 )
+   /JAN.ELA.GoalDistance.5t.75 =SUM(JAN.ELA.GoalDistance.5t.75)
+   /JAN.ELA.GoalDistance.75to1  =SUM(JAN.ELA.GoalDistance.75to1 )
+   /JAN.ELA.GoalDistance.1to1.25 =SUM(JAN.ELA.GoalDistance.1to1.25)
+   /JAN.ELA.GoalDistance.1.25to1.5 =SUM(JAN.ELA.GoalDistance.1.25to1.5)
+   /JAN.ELA.GoalDistance.1.5to1.75=SUM(JAN.ELA.GoalDistance.1.5to1.75)
+   /JAN.ELA.GoalDistance.1.75up=SUM(JAN.ELA.GoalDistance.1.75up)   
+   /JAN.ELA.GoalDistance.SampleSize=SUM(JAN.ELA.GoalDistance.SampleSize)
+   /JAN.MTH.GoalDistance.0t25 =SUM(JAN.MTH.GoalDistance.0t25)
+   /JAN.MTH.GoalDistance.25t.5 =SUM(JAN.MTH.GoalDistance.25t.5 )
+   /JAN.MTH.GoalDistance.5t.75 =SUM(JAN.MTH.GoalDistance.5t.75)
+   /JAN.MTH.GoalDistance.75to1  =SUM(JAN.MTH.GoalDistance.75to1 )
+   /JAN.MTH.GoalDistance.1to1.25 =SUM(JAN.MTH.GoalDistance.1to1.25)
+   /JAN.MTH.GoalDistance.1.25to1.5 =SUM(JAN.MTH.GoalDistance.1.25to1.5)
+   /JAN.MTH.GoalDistance.1.5to1.75=SUM(JAN.MTH.GoalDistance.1.5to1.75)
+   /JAN.MTH.GoalDistance.1.75up=SUM(JAN.MTH.GoalDistance.1.75up)   
+   /JAN.MTH.GoalDistance.SampleSize=SUM(JAN.MTH.GoalDistance.SampleSize).
 
 DATASET ACTIVATE FINALTEAMDATASET39ONLY.
 
@@ -1040,6 +1910,14 @@ COMPUTE NotFLLITMetJUNDosePerc = NotFLLITMetJUNDose / LITNotOfficialFL.
 COMPUTE NotFLMTHMetJUNDosePerc = NotFLMTHMetJUNDose / MTHNotOfficialFL.
 COMPUTE NotFLATTMet56DosePerc = NotFLATTMet56Dose / ATTNotOfficialFL.
 COMPUTE NotFLBEHMet56DosePerc = NotFLBEHMet56Dose / BEHNotOfficialFL.
+*****     Lead Measures.
+COMPUTE LEAD_LIT39_SOSPerc = LEAD_LIT39_SOS / LEAD_LIT39_SampleSize.
+COMPUTE LEAD_MTH39_SOSPerc = LEAD_MTH39_SOS / LEAD_MTH39_SampleSize.
+COMPUTE LEAD_ATT69_StartLT90ADAPerc = LEAD_ATT69_StartLT90ADA / LEAD_ATT69_SampleSize.
+COMPUTE LITAssess_FLComp_SOSPerc = LITAssess_FLComp_SOS / LITAssess_FLComp_SampleSize.
+COMPUTE ELACG_FLComp_SOSPerc = ELACG_FLComp_SOS / ELACG_FLComp_SampleSize.
+COMPUTE MTHAssess_FLComp_SOSPerc = MTHAssess_FLComp_SOS / MTHAssess_FLComp_SampleSize.
+COMPUTE MTHCG_FLComp_SOSPerc = MTHCG_FLComp_SOS / MTHCG_FLComp_SampleSize.
 EXECUTE.
 
 ***** Add variable and value labels.
@@ -1078,7 +1956,14 @@ VARIABLE LABELS LITMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Lite
    NotFLLITMetMAYDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting ELA/Literacy MAY Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
    NotFLMTHMetMAYDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math MAY Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
    NotFLLITMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting ELA/Literacy JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
-   NotFLMTHMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)".
+   NotFLMTHMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
+   LEAD_LIT39_SOSPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in ELA/Literacy (3rd-9th Grade)"
+   LEAD_MTH39_SOSPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in Math (3rd-9th Grade)"
+   LEAD_ATT69_StartLT90ADAPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in Attendance (6th-9th Grade)"
+   LITAssess_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Literacy Assessments (3rd-9th Grade)"
+   ELACG_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in ELA Course Grades (6th-9th Grade)"
+   MTHAssess_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Math Assessments (3rd-9th Grade)"
+   MTHCG_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Math Course Grades (6th-9th Grade)".
 VALUE LABELS DNSchool 0 "Not a Diplomas Now School"
    1 "Diplomas Now School".
 VALUE LABELS RegionID 1 "Florida"
@@ -1263,7 +2148,39 @@ AGGREGATE /OUTFILE = FINALSITEDATASET39ONLY
    /NotFLLITMetJUNDose = SUM(NotFLLITMetJUNDose)
    /NotFLMTHMetJUNDose = SUM(NotFLMTHMetJUNDose)
    /NotFLATTMet56Dose = SUM(NotFLATTMet56Dose)
-   /NotFLBEHMet56Dose = SUM(NotFLBEHMet56Dose).
+   /NotFLBEHMet56Dose = SUM(NotFLBEHMet56Dose)
+   /LEAD_LIT39_SampleSize = SUM(LEAD_LIT39_SampleSize)
+   /LEAD_MTH39_SampleSize = SUM(LEAD_MTH39_SampleSize)
+   /LEAD_ATT69_SampleSize = SUM(LEAD_ATT69_SampleSize)
+   /LEAD_LIT39_SOS = SUM(LEAD_LIT39_SOS)
+   /LEAD_MTH39_SOS = SUM(LEAD_MTH39_SOS)
+   /LEAD_ATT69_StartLT90ADA = SUM(LEAD_ATT69_StartLT90ADA)
+   /LITAssess_FLComp_SampleSize = SUM(LITAssess_FLComp_SampleSize)
+   /LITAssess_FLComp_SOS = SUM(LITAssess_FLComp_SOS)
+   /ELACG_FLComp_SampleSize = SUM(ELACG_FLComp_SampleSize)
+   /ELACG_FLComp_SOS = SUM(ELACG_FLComp_SOS)
+   /MTHAssess_FLComp_SampleSize = SUM(MTHAssess_FLComp_SampleSize)
+   /MTHAssess_FLComp_SOS = SUM(MTHAssess_FLComp_SOS)
+   /MTHCG_FLComp_SampleSize = SUM(MTHCG_FLComp_SampleSize)
+   /MTHCG_FLComp_SOS = SUM(MTHCG_FLComp_SOS)
+   /JAN.ELA.GoalDistance.0t25 =SUM(JAN.ELA.GoalDistance.0t25)
+   /JAN.ELA.GoalDistance.25t.5 =SUM(JAN.ELA.GoalDistance.25t.5 )
+   /JAN.ELA.GoalDistance.5t.75 =SUM(JAN.ELA.GoalDistance.5t.75)
+   /JAN.ELA.GoalDistance.75to1  =SUM(JAN.ELA.GoalDistance.75to1 )
+   /JAN.ELA.GoalDistance.1to1.25 =SUM(JAN.ELA.GoalDistance.1to1.25)
+   /JAN.ELA.GoalDistance.1.25to1.5 =SUM(JAN.ELA.GoalDistance.1.25to1.5)
+   /JAN.ELA.GoalDistance.1.5to1.75=SUM(JAN.ELA.GoalDistance.1.5to1.75)
+   /JAN.ELA.GoalDistance.1.75up=SUM(JAN.ELA.GoalDistance.1.75up)
+   /JAN.ELA.GoalDistance.SampleSize=SUM(JAN.ELA.GoalDistance.SampleSize)
+   /JAN.MTH.GoalDistance.0t25 =SUM(JAN.MTH.GoalDistance.0t25)
+   /JAN.MTH.GoalDistance.25t.5 =SUM(JAN.MTH.GoalDistance.25t.5 )
+   /JAN.MTH.GoalDistance.5t.75 =SUM(JAN.MTH.GoalDistance.5t.75)
+   /JAN.MTH.GoalDistance.75to1  =SUM(JAN.MTH.GoalDistance.75to1 )
+   /JAN.MTH.GoalDistance.1to1.25 =SUM(JAN.MTH.GoalDistance.1to1.25)
+   /JAN.MTH.GoalDistance.1.25to1.5 =SUM(JAN.MTH.GoalDistance.1.25to1.5)
+   /JAN.MTH.GoalDistance.1.5to1.75=SUM(JAN.MTH.GoalDistance.1.5to1.75)
+   /JAN.MTH.GoalDistance.1.75up=SUM(JAN.MTH.GoalDistance.1.75up)
+   /JAN.MTH.GoalDistance.SampleSize=SUM(JAN.MTH.GoalDistance.SampleSize).
 
 DATASET ACTIVATE FINALSITEDATASET39ONLY.
 
@@ -1310,6 +2227,32 @@ COMPUTE NotFLLITMetJUNDosePerc = NotFLLITMetJUNDose / LITNotOfficialFL.
 COMPUTE NotFLMTHMetJUNDosePerc = NotFLMTHMetJUNDose / MTHNotOfficialFL.
 COMPUTE NotFLATTMet56DosePerc = NotFLATTMet56Dose / ATTNotOfficialFL.
 COMPUTE NotFLBEHMet56DosePerc = NotFLBEHMet56Dose / BEHNotOfficialFL.
+*****     Lead Measures.
+COMPUTE LEAD_LIT39_SOSPerc = LEAD_LIT39_SOS / LEAD_LIT39_SampleSize.
+COMPUTE LEAD_MTH39_SOSPerc = LEAD_MTH39_SOS / LEAD_MTH39_SampleSize.
+COMPUTE LEAD_ATT69_StartLT90ADAPerc = LEAD_ATT69_StartLT90ADA / LEAD_ATT69_SampleSize.
+COMPUTE LITAssess_FLComp_SOSPerc = LITAssess_FLComp_SOS / LITAssess_FLComp_SampleSize.
+COMPUTE ELACG_FLComp_SOSPerc = ELACG_FLComp_SOS / ELACG_FLComp_SampleSize.
+COMPUTE MTHAssess_FLComp_SOSPerc = MTHAssess_FLComp_SOS / MTHAssess_FLComp_SampleSize.
+COMPUTE MTHCG_FLComp_SOSPerc = MTHCG_FLComp_SOS / MTHCG_FLComp_SampleSize.
+*****     Calculate % in each ELA goal distance category.
+COMPUTE JAN.ELA.GoalDistance.0t25perc =JAN.ELA.GoalDistance.0t25/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.25t.5perc =JAN.ELA.GoalDistance.25t.5/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.5t.75perc =JAN.ELA.GoalDistance.5t.75/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.75to1perc  =JAN.ELA.GoalDistance.75to1/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.1to1.25perc =JAN.ELA.GoalDistance.1to1.25/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.1.25to1.5perc =JAN.ELA.GoalDistance.1.25to1.5/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.1.5to1.75perc=JAN.ELA.GoalDistance.1.5to1.75/JAN.ELA.GoalDistance.SampleSize.
+COMPUTE JAN.ELA.GoalDistance.1.75upperc=JAN.ELA.GoalDistance.1.75up/JAN.ELA.GoalDistance.SampleSize.
+*****     Calculate % in each MTH goal distance category.
+COMPUTE JAN.MTH.GoalDistance.0t25perc =JAN.MTH.GoalDistance.0t25/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.25t.5perc =JAN.MTH.GoalDistance.25t.5/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.5t.75perc =JAN.MTH.GoalDistance.5t.75/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.75to1perc  =JAN.MTH.GoalDistance.75to1/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.1to1.25perc =JAN.MTH.GoalDistance.1to1.25/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.1.25to1.5perc =JAN.MTH.GoalDistance.1.25to1.5/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.1.5to1.75perc=JAN.MTH.GoalDistance.1.5to1.75/JAN.MTH.GoalDistance.SampleSize.
+COMPUTE JAN.MTH.GoalDistance.1.75upperc=JAN.MTH.GoalDistance.1.75up/JAN.MTH.GoalDistance.SampleSize.
 EXECUTE.
 
 ***** Add variable and value labels.
@@ -1348,7 +2291,30 @@ VARIABLE LABELS LITMetOCTDosePerc "DOSAGE ACTUAL\n% of Students Meeting ELA/Lite
    NotFLLITMetMAYDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting ELA/Literacy MAY Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
    NotFLMTHMetMAYDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math MAY Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
    NotFLLITMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting ELA/Literacy JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
-   NotFLMTHMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)".
+   NotFLMTHMetJUNDosePerc "DOSAGE RESULT\nUNOFFICIAL FL\n% of Students Meeting Math JUNE Dosage Benchmark (out of UNOFFICIAL FL Enrollment)"
+   LEAD_LIT39_SOSPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in ELA/Literacy (3rd-9th Grade)"
+   LEAD_MTH39_SOSPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in Math (3rd-9th Grade)"
+   LEAD_ATT69_StartLT90ADAPerc "LEAD MEASURE RESULT\n% of Students Starting Off-Track/Sliding in Attendance (6th-9th Grade)"
+   LITAssess_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Literacy Assessments (3rd-9th Grade)"
+   ELACG_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in ELA Course Grades (6th-9th Grade)"
+   MTHAssess_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Math Assessments (3rd-9th Grade)"
+   MTHCG_FLComp_SOSPerc "% Students Starting Off-Track/Sliding in Math Course Grades (6th-9th Grade)"
+   JAN.ELA.GoalDistance.0t25perc "% of Students Missed Dosage Goal by 75% or more%" 
+   JAN.ELA.GoalDistance.25t.5perc  "% of Students Missed Dosage Goal by 50% to 74.99%" 
+   JAN.ELA.GoalDistance.5t.75perc  "% of Students Missed Dosage Goal by 25% to 49.99%"
+   JAN.ELA.GoalDistance.75to1perc   "% of Students Missed Dosage Goal by 0.01% to 24.99%" 
+   JAN.ELA.GoalDistance.1to1.25perc  "% of Students Met or Exceeded Dosage Goal up to 25%"
+   JAN.ELA.GoalDistance.1.25to1.5perc  "% of Students Exceeded Dosage Goal by 25% to 49.99%" 
+   JAN.ELA.GoalDistance.1.5to1.75perc  "% of Students Exceeded Dosage Goal by 50% to 74.99%"
+   JAN.ELA.GoalDistance.1.75upperc  "% of Students Exceeded Dosage Goal by 75% or more"
+   JAN.MTH.GoalDistance.0t25perc "% of Students Missed Dosage Goal by 75% or more%" 
+   JAN.MTH.GoalDistance.25t.5perc  "% of Students Missed Dosage Goal by 50% to 74.99%" 
+   JAN.MTH.GoalDistance.5t.75perc  "% of Students Missed Dosage Goal by 25% to 49.99%"
+   JAN.MTH.GoalDistance.75to1perc   "% of Students Missed Dosage Goal by 0.01% to 24.99%" 
+   JAN.MTH.GoalDistance.1to1.25perc  "% of Students Met or Exceeded Dosage Goal up to 25%"
+   JAN.MTH.GoalDistance.1.25to1.5perc  "% of Students Exceeded Dosage Goal by 25% to 49.99%" 
+   JAN.MTH.GoalDistance.1.5to1.75perc  "% of Students Exceeded Dosage Goal by 50% to 74.99%"
+   JAN.MTH.GoalDistance.1.75upperc  "% of Students Exceeded Dosage Goal by 75% or more".
 VALUE LABELS RegionID 1 "Florida"
 2 "Midwest"
 3 "Northeast"
